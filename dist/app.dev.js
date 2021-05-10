@@ -17,7 +17,10 @@ app.use(express["static"](path.join(__dirname, "public"))); //this serves all of
 
 var loginRoute = require("./routes/loginRoutes");
 
+var registerRoute = require("./routes/registerRoutes");
+
 app.use("/login", loginRoute);
+app.use("/register", registerRoute);
 app.get('/', middleware.requireLogin, function (req, res, next) {
   var payLoad = {
     pageTitle: "home"

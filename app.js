@@ -12,8 +12,10 @@ app.use(express.static(path.join(__dirname,"public")))//this serves all of the c
 
 //Routes
 const loginRoute = require("./routes/loginRoutes")
+const registerRoute = require("./routes/registerRoutes")
 
 app.use("/login", loginRoute)
+app.use("/register", registerRoute)
 
 app.get('/', middleware.requireLogin, (req,res,next)=>{
 

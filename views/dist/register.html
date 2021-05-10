@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/dist/login.css">
+  </head>
+  <body> 
+    <div class="wrapper">
+      <div class="loginContainer"> 
+        <h1>Register</h1>
+        <form action="" method="post" onSubmit="event.preventDefault();validateForm()">
+          <input type="text" name="username" placeholder="Username" required="">
+          <input type="text" name="firstName" placeholder="First Name" required="">
+          <input type="text" name="LastName" placeholder="Last Name" required="">
+          <input type="email" id="email" name="email" placeholder="Email Address" required="">
+          <input type="email" id="confirmEmail" name="confirmEmail" placeholder="Confirm Email Address" required="">
+          <input type="password" name="password" id="password" placeholder="Password" required="">
+          <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" required=""><span class="warningToggle" id="passwordWarning">Whoops! Passwords do Not match </span><span class="warningToggle" id="emailWarning"> Whoops! Emails did Not match</span>
+          <input type="submit" placeholder="Join the Neighborhood!" value="register">
+        </form><a href="/">Already have an account?</a>
+        <script>
+          let passwordText=document.querySelector('#password')
+          let confirmPasswordText=document.querySelector('#confirmPassword')
+          let emailText=document.querySelector('#email')
+          let confirmEmailText=document.querySelector('#confirmEmail')
+          let passwordWarning = document.querySelector('#passwordWarning')
+          let emailWarning = document.querySelector('#emailWarning')
+          let form = document.querySelector('.loginContainer')
+          
+          function validateForm(){
+              passwordWarning.classList.add("warningToggle")
+              emailWarning.classList.add("warningToggle")
+              
+              if (passwordText.value!==confirmPasswordText.value||emailText.value!==confirmEmailText.value){                                
+                  if (passwordText.value!==confirmPasswordText.value){
+                      passwordWarning.classList.remove("warningToggle")
+                      console.log('password error!')
+                  }
+                  if (emailText.value!==confirmEmailText.value){//while both fields contain writing
+                      emailWarning.classList.remove("warningToggle")
+                      console.log('email error!')
+                  }
+              } else {
+                  form.submit()
+              }
+          }
+        </script>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  </body>
+</html>

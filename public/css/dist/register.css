@@ -52,13 +52,3 @@ body .wrapper .loginContainer a {
   display: block;
   margin: 0.5rem auto;
 }
-body .wrapper .loginContainer .warningToggle {
-  display: none;
-}
-body .wrapper .loginContainer #passwordWarning, body .wrapper .loginContainer #emailWarning {
-  font-size: 1rem;
-  color: red;
-  background-color: #ffc2c2;
-  border: 1px solid rgba(105, 46, 46, 0.315);
-  border-radius: 20px;
-}
