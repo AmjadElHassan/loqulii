@@ -1,5 +1,8 @@
 extends layouts/main-layout.pug
 
 block content
-    div
-        p i guess this is an example
+    +createPostForm(userLoggedIn)
+    .postsContainer
+
+block scripts 
+    script(src="/js/home.js")

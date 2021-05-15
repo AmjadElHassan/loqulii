@@ -1,0 +1,171 @@
+* {
+  --blue: rgb(49, 116, 240);
+  --blueLight: #9bd1f9;
+  --buttonHoverbg: #d4edff;
+  --grayLight: rgb(230,236,240);
+  --spacing: 1rem;
+  --grayText: rgb(101,119,134)
+  --grayButtonText: rgba(0,0,0,0.34)
+  --red: rgb(226,34,94) ;
+}
+
+body h1 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+body a {
+  color: inherit;
+}
+body nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  height: 100%;
+}
+body nav a {
+  display: flex;
+  padding: 10px;
+  font-size: 2rem;
+  width: 3.7rem;
+  height: 3.7rem;
+  align-items: center;
+  justify-content: center;
+  transition: 0.5s;
+  color: #212529;
+}
+body nav a.blue {
+  color: var(--blue);
+}
+body nav a:hover {
+  color: var(--blue);
+  background-color: var(--buttonHoverbg);
+  text-decoration: none;
+  border-radius: 8px;
+}
+body .mainSectionContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border-left: solid 1px var(--grayLight);
+  border-right: solid 1px var(--grayLight);
+}
+body .mainSectionContainer .titleContainer {
+  height: 3rem;
+  padding: 0 var(--spacing);
+  border-bottom: solid 1px var(--grayLight);
+  border-top: solid 1px var(--grayLight);
+  flex-shrink: 0;
+}
+body .mainSectionContainer .titleContainer h1 {
+  flex: 1;
+  margin: 0.7rem 0;
+}
+body .postFormContainer {
+  display: flex;
+  padding: var(--spacing);
+  border-bottom: 10px solid #e6ecf0;
+  flex-shrink: 0;
+}
+body .postFormContainer .userImageContainer {
+  width: 50px;
+  height: 50px;
+}
+body .postFormContainer .userImageContainer img {
+  width: 100%;
+  border-radius: 50%;
+  background-color: white;
+}
+body .postFormContainer .textareaContainer {
+  flex: 1;
+  padding-left: var(--spacing);
+}
+body .postFormContainer .textareaContainer textarea {
+  width: 100%;
+  border: none;
+  resize: none;
+  font-size: 1.1rem;
+}
+body .postFormContainer .textareaContainer .buttonsContainer #submitPostButton {
+  background: var(--blue);
+  color: white;
+  border: none;
+  border-radius: 40px;
+  padding: 0.5rem 1rem;
+}
+body .postFormContainer .textareaContainer .buttonsContainer #submitPostButton:disabled {
+  background-color: var(--blueLight);
+}
+
+.post {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing);
+  cursor: pointer;
+  border-bottom: 1px solid var(--grayLight);
+  flex-shrink: 0;
+}
+.post .mainContentContainer {
+  flex: 1;
+  display: flex;
+}
+.post .mainContentContainer .userImageContainer {
+  width: 50px;
+  height: 50px;
+}
+.post .mainContentContainer .userImageContainer img {
+  width: 100%;
+  border-radius: 50%;
+  background-color: white;
+}
+.post .mainContentContainer .postContentContainer {
+  padding-left: var(--spacing);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.post .mainContentContainer .postContentContainer .header * {
+  padding-right: 0.5rem;
+}
+.post .mainContentContainer .postContentContainer .header .displayName {
+  font-weight: bold;
+}
+.post .mainContentContainer .postContentContainer .header .displayName:hover {
+  text-decoration: underline;
+}
+.post .mainContentContainer .postContentContainer .header .username, .post .mainContentContainer .postContentContainer .header .date {
+  font-size: 0.92rem;
+  color: var(--grayText);
+}
+.post .mainContentContainer .postContentContainer .postFooter {
+  display: flex;
+  align-items: center;
+}
+.post .mainContentContainer .postContentContainer .postFooter .postButtonContainer {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+}
+.post .mainContentContainer .postContentContainer .postFooter .postButtonContainer.red button.active {
+  color: red;
+}
+.post .mainContentContainer .postContentContainer .postFooter .postButtonContainer.green button.active {
+  color: #66b155;
+  border-radius: 20px;
+}
+.post .mainContentContainer .postContentContainer .postFooter .postButtonContainer button {
+  padding: 0 1.2rem;
+  padding-top: 0.25rem;
+  background-color: transparent;
+  border: none;
+  color: var(--grayButtonText);
+}
+.post .mainContentContainer .postContentContainer .postFooter .postButtonContainer button:hover {
+  background-color: #d4edff;
+  border-radius: 20px;
+  color: #2755b8;
+  transform: scale(1.1);
+}
+.post .mainContentContainer .postContentContainer .postFooter .postButtonContainer button i, .post .mainContentContainer .postContentContainer .postFooter .postButtonContainer button span {
+  pointer-events: none;
+}

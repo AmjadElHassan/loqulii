@@ -12,14 +12,14 @@
     <div class="wrapper">
       <div class="loginContainer"> 
         <h1>Register</h1>
-        <form action="" method="post" onSubmit="event.preventDefault();validateForm()">
+        <form id="registerForm" action="" method="post" onSubmit="event.preventDefault(); validateForm()">
           <input type="text" name="username" placeholder="Username" required="">
           <input type="text" name="firstName" placeholder="First Name" required="">
-          <input type="text" name="LastName" placeholder="Last Name" required="">
+          <input type="text" name="lastName" placeholder="Last Name" required="">
           <input type="email" id="email" name="email" placeholder="Email Address" required="">
           <input type="email" id="confirmEmail" name="confirmEmail" placeholder="Confirm Email Address" required="">
           <input type="password" name="password" id="password" placeholder="Password" required="">
-          <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" required=""><span class="warningToggle" id="passwordWarning">Whoops! Passwords do Not match </span><span class="warningToggle" id="emailWarning"> Whoops! Emails did Not match</span>
+          <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" required=""><span class="warningToggle" id="passwordWarning">Whoops! Passwords do Not match </span><span class="warningToggle" id="emailWarning"> Whoops! Emails did Not match</span><span class="errorMessage"></span>
           <input type="submit" placeholder="Join the Neighborhood!" value="register">
         </form><a href="/">Already have an account?</a>
         <script>
@@ -29,7 +29,7 @@
           let confirmEmailText=document.querySelector('#confirmEmail')
           let passwordWarning = document.querySelector('#passwordWarning')
           let emailWarning = document.querySelector('#emailWarning')
-          let form = document.querySelector('.loginContainer')
+          let form = document.querySelector('#registerForm')
           
           function validateForm(){
               passwordWarning.classList.add("warningToggle")

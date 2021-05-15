@@ -1,0 +1,189 @@
+* {
+    --blue: rgb(49, 116, 240);
+    --blueLight: #9bd1f9;
+    --buttonHoverbg: #d4edff;
+    --grayLight: rgb(230,236,240);
+    --spacing: 1rem;
+    --grayText: rgb(101,119,134)
+    --grayButtonText: rgba(0,0,0,0.34)
+    --red: rgb(226,34,94)
+}
+
+body {
+    h1{
+        font-size:1.2rem;
+        font-weight: bold;
+        margin:0;
+    }
+    a {
+        color: inherit;
+    }
+
+    nav {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        height: 100%;
+
+        a {
+            display: flex;
+            padding: 10px;
+            font-size: 2rem;
+            width: 3.7rem;
+            height: 3.7rem;
+            align-items: center;
+            justify-content: center;
+            transition: 0.5s;
+            color: #212529;
+            &.blue {
+                color: var(--blue);
+            }
+
+            &:hover {
+                color: var(--blue);
+                background-color: var(--buttonHoverbg);
+                text-decoration: none;
+                border-radius: 8px;
+            }
+        }
+    }
+
+    .mainSectionContainer {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        border-left: solid 1px var(--grayLight);
+        border-right: solid 1px var(--grayLight);
+        .titleContainer{
+            height: 3rem;
+            padding: 0 var(--spacing);
+            border-bottom: solid 1px var(--grayLight);
+            border-top: solid 1px var(--grayLight);
+            flex-shrink: 0;
+            h1{
+                flex:1;
+                margin: 0.7rem 0;
+            }
+        }
+    }
+    .postFormContainer{
+        display: flex;
+        padding: var(--spacing);
+        border-bottom: 10px solid rgb(230, 236, 240);
+        flex-shrink: 0;
+        .userImageContainer{
+            width: 50px;
+            height: 50px;
+            img {
+                width: 100%;
+                border-radius: 50%;
+                background-color: white;
+            }
+        }
+        .textareaContainer{
+            flex:1;
+            padding-left: var(--spacing);
+            textarea{
+                width: 100%;
+                border: none;
+                resize: none;
+                font-size: 1.1rem;
+            }
+            .buttonsContainer{
+                #submitPostButton{
+                    background: var(--blue);
+                    color: white;
+                    border: none;
+                    border-radius: 40px;
+                    padding: 0.5rem 1rem;
+                    &:disabled{
+                        background-color: var(--blueLight);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.post{
+    display:flex;
+    flex-direction: column;
+    padding: var(--spacing);
+    cursor: pointer;
+    border-bottom: 1px solid var(--grayLight);
+    flex-shrink: 0;
+    .mainContentContainer{
+        flex:1;
+        display: flex;
+        .userImageContainer{
+            width: 50px;
+            height: 50px;
+            img {
+                width: 100%;
+                border-radius: 50%;
+                background-color: white;
+            }
+        }
+        .postContentContainer{
+            padding-left: var(--spacing);
+            display:flex;
+            flex-direction: column;
+            flex:1;
+            .header{
+                *{
+                    padding-right: 0.5rem;
+                }
+                .displayName{
+                    font-weight: bold;
+                    &:hover{
+                        text-decoration: underline;
+                    }
+                }
+                .username,.date{
+                    font-size:0.92rem;
+                    color: var(--grayText)
+                }
+
+            }
+            // .postBody{
+            // }
+            .postFooter{
+                display:flex;
+                align-items: center;
+                .postButtonContainer{
+                    flex:1;
+                    display:flex;
+                    align-items: flex-start;
+                    &.red{
+                        button.active{
+                            color: red;
+                        }
+                    }
+                    &.green{
+                        button.active{
+                            color: rgb(102, 177, 85);
+                            border-radius: 20px;
+                        }
+                    }
+                    button{
+                        padding:0 1.2rem;
+                        padding-top: 0.25rem;
+                        background-color: transparent;
+                        border:none;
+                        color: var(--grayButtonText);   
+                        &:hover{
+                            background-color: #d4edff;
+                            border-radius: 20px;
+                            color:  rgb(39, 85, 184);
+                            transform: scale(1.1)
+                        }
+                        i,span{
+                            pointer-events: none
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+}

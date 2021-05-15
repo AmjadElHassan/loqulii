@@ -3,16 +3,17 @@ extends layouts/login-layout.pug
 block content
     .loginContainer 
         h1 Register
-        form(action="", method="post", onSubmit="event.preventDefault();validateForm()")
-            input(type="text", name="username", placeholder="Username", required="")
-            input(type="text", name="firstName", placeholder="First Name", required="")
-            input(type="text", name="LastName", placeholder="Last Name", required="")
-            input(type="email", id="email", name="email", placeholder="Email Address", required="")
+        form#registerForm(action="", method="post", onSubmit="event.preventDefault(); validateForm()")
+            input(type="text", name="username", placeholder="Username", value=username required="")
+            input(type="text", name="firstName", placeholder="First Name", value=firstName  required="")
+            input(type="text", name="lastName", placeholder="Last Name", value=lastName required="")
+            input(type="email", id="email", name="email", placeholder="Email Address", value=email required="")
             input(type="email", id="confirmEmail", name="confirmEmail", placeholder="Confirm Email Address", required="")
             input(type="password", name="password", id="password", placeholder="Password", required="")
             input(type="password", name="confirmPassword",id="confirmPassword", placeholder="Confirm Password", required="")
             span(id="passwordWarning" class="warningToggle") Whoops! Passwords do Not match 
             span(id="emailWarning" class="warningToggle")  Whoops! Emails did Not match
+            span.errorMessage #{errorMessage}
             input(type="submit", placeholder="Join the Neighborhood!", value="register")
         a(href="/") Already have an account?
 
@@ -23,7 +24,7 @@ block content
             let confirmEmailText=document.querySelector('#confirmEmail')
             let passwordWarning = document.querySelector('#passwordWarning')
             let emailWarning = document.querySelector('#emailWarning')
-            let form = document.querySelector('.loginContainer')
+            let form = document.querySelector('#registerForm')
 
             function validateForm(){
                 passwordWarning.classList.add("warningToggle")
