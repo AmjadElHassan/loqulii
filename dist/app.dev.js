@@ -54,6 +54,6 @@ app.get('/', middleware.requireLogin, function (req, res, next) {
   };
   res.status(200).render("home", payLoad);
 });
-app.listen(port, function () {
+app.listen(process.env.PORT, function () {
   console.log("We are live on port:".concat(port));
 });

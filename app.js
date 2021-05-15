@@ -49,6 +49,6 @@ app.get('/', middleware.requireLogin, (req,res,next)=>{
     res.status(200).render("home", payLoad)
 })
 
-app.listen(port,()=>{
+app.listen(process.env.PORT,()=>{
     console.log(`We are live on port:${port}`)
 })
