@@ -3,7 +3,7 @@
 var express = require('express');
 
 var app = express();
-var port = 3000;
+var PORT = 3000;
 
 var middleware = require('./middleware');
 
@@ -54,6 +54,6 @@ app.get('/', middleware.requireLogin, function (req, res, next) {
   };
   res.status(200).render("home", payLoad);
 });
-app.listen(process.env.PORT, function () {
-  console.log("We are live on port:".concat(port));
+app.listen(process.env.PORT || PORT, function () {
+  console.log("We are live on port:".concat(PORT));
 });

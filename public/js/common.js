@@ -95,6 +95,14 @@ function getPostId(target){
 
 function createPostHtml(postData){
 
+    if (!postData) return alert("post object is null")
+
+    let isRetweet = (postData.retweetData?true:false)
+    retweetedBy = isRetweet? postData.postedBy.username: null;
+
+    postData = isRetweet? postData.retweetData: postData
+
+    console.log(isRetweet)
     if  (!postData.postedBy._id){//in the case that the postedby is just an object id
         return console.log('User object not populated')
     }
@@ -109,8 +117,21 @@ function createPostHtml(postData){
     let user = postData.postedBy
     let userRealName = user.firstName + ` ${user.lastName}`
     let timestamp = timeDifference(new Date(),new Date(postData.createdAt))
+
+    let retweetText = "";
+    if(isRetweet){
+        retweetText=`<span>
+        <i class="fas fa-retweet"></i>
+        Retweeted by <a href="/profile/${retweetedBy}">
+        ${retweetedBy}
+        </a>
+        </span>`
+    }
     
     return `<div class="post" data-id="${postData._id}">
+                <div class="postActionContainer">
+                    ${retweetText}
+                </div>
                 <div class="mainContentContainer">
                     <div class="userImageContainer">
                         <img src="${user.profilePic}">

@@ -1,6 +1,6 @@
 let express = require('express')
 const app = express()
-const port = 3000
+const PORT = 3000
 const middleware = require('./middleware')
 const path = require('path')
 const bodyParser = require('body-parser')
@@ -49,6 +49,6 @@ app.get('/', middleware.requireLogin, (req,res,next)=>{
     res.status(200).render("home", payLoad)
 })
 
-app.listen(process.env.PORT,()=>{
-    console.log(`We are live on port:${port}`)
+app.listen(process.env.PORT||PORT,()=>{
+    console.log(`We are live on port:${PORT}`)
 })

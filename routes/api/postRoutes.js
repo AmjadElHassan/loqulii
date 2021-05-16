@@ -13,7 +13,10 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 router.get('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
     try {
-        let response = await Post.find().populate("postedBy").sort({ "createdAt": -1 })
+        let response = await Post.find().populate("postedBy")
+        .populate("retweetData")
+        .sort({ "createdAt": -1 })
+        await User.populate(response, {path: "retweetData.postedBy"})
         res.status(200).send(response)
     }
     catch (err) {

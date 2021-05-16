@@ -105,6 +105,15 @@ body .postFormContainer .textareaContainer .buttonsContainer #submitPostButton:d
   border-bottom: 1px solid var(--grayLight);
   flex-shrink: 0;
 }
+.post .postActionContainer {
+  padding-left: 2rem;
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+  font-weight: 500;
+}
+.post .postActionContainer * {
+  color: var(--grayText);
+}
 .post .mainContentContainer {
   flex: 1;
   display: flex;

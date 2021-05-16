@@ -112,6 +112,15 @@ body {
     cursor: pointer;
     border-bottom: 1px solid var(--grayLight);
     flex-shrink: 0;
+    .postActionContainer{
+        *{
+            color: var(--grayText);
+        }
+        padding-left: 2rem;
+        font-size:0.8rem;
+        margin-bottom: 0.2rem;
+        font-weight: 500;
+    }
     .mainContentContainer{
         flex:1;
         display: flex;

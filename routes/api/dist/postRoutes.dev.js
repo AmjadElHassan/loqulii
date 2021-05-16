@@ -28,28 +28,34 @@ router.get('/', function _callee(req, res, next) {
         case 0:
           _context.prev = 0;
           _context.next = 3;
-          return regeneratorRuntime.awrap(Post.find().populate("postedBy").sort({
+          return regeneratorRuntime.awrap(Post.find().populate("postedBy").populate("retweetData").sort({
             "createdAt": -1
           }));
 
         case 3:
           response = _context.sent;
+          _context.next = 6;
+          return regeneratorRuntime.awrap(User.populate(response, {
+            path: "retweetData.postedBy"
+          }));
+
+        case 6:
           res.status(200).send(response);
-          _context.next = 11;
+          _context.next = 13;
           break;
 
-        case 7:
-          _context.prev = 7;
+        case 9:
+          _context.prev = 9;
           _context.t0 = _context["catch"](0);
           console.log(_context.t0);
           res.sendStatus(400);
 
-        case 11:
+        case 13:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[0, 7]]);
+  }, null, null, [[0, 9]]);
 });
 router.post('/', function _callee2(req, res, next) {
   var postData, newPost, populatedNewPost;
