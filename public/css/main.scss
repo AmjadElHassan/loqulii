@@ -103,6 +103,33 @@ body {
             }
         }
     }
+    #replyModal{
+        padding:0;
+        .modal-dialog{
+            .modal-header{
+                span{
+                    font-weight: bolder;
+                    font-size: 2rem;
+                }
+            }
+            .modal-content{
+                .modal-body{
+                    #originalPostContainer{
+                        .post{
+                            padding:0;
+                            padding-bottom: var(--spacing)
+                        }
+                    }
+
+                    .postFormContainer{
+                        border-bottom: none;
+                        padding:0;
+                        padding-top: var(--spacing)
+                    }
+                }
+            }
+        }
+    }
 }
 
 .post{
@@ -184,7 +211,7 @@ body {
                             background-color: #d4edff;
                             border-radius: 20px;
                             color:  rgb(39, 85, 184);
-                            transform: scale(1.1)
+                            // transform: scale(1.1)
                         }
                         i,span{
                             pointer-events: none

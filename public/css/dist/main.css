@@ -96,6 +96,22 @@ body .postFormContainer .textareaContainer .buttonsContainer #submitPostButton {
 body .postFormContainer .textareaContainer .buttonsContainer #submitPostButton:disabled {
   background-color: var(--blueLight);
 }
+body #replyModal {
+  padding: 0;
+}
+body #replyModal .modal-dialog .modal-header span {
+  font-weight: bolder;
+  font-size: 2rem;
+}
+body #replyModal .modal-dialog .modal-content .modal-body #originalPostContainer .post {
+  padding: 0;
+  padding-bottom: var(--spacing);
+}
+body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
+  border-bottom: none;
+  padding: 0;
+  padding-top: var(--spacing);
+}
 
 .post {
   display: flex;
@@ -173,7 +189,6 @@ body .postFormContainer .textareaContainer .buttonsContainer #submitPostButton:d
   background-color: #d4edff;
   border-radius: 20px;
   color: #2755b8;
-  transform: scale(1.1);
 }
 .post .mainContentContainer .postContentContainer .postFooter .postButtonContainer button i, .post .mainContentContainer .postContentContainer .postFooter .postButtonContainer button span {
   pointer-events: none;

@@ -20,97 +20,127 @@ var session = require('express-session');
 app.use(bodyParser.urlencoded({
   extended: false
 }));
-router.get('/', function _callee(req, res, next) {
-  var response;
+router.get('/:id', function _callee(req, res, next) {
+  var results;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           _context.prev = 0;
           _context.next = 3;
-          return regeneratorRuntime.awrap(Post.find().populate("postedBy").populate("retweetData").sort({
-            "createdAt": -1
-          }));
+          return regeneratorRuntime.awrap(getPosts(req.params.id));
 
         case 3:
-          response = _context.sent;
-          _context.next = 6;
-          return regeneratorRuntime.awrap(User.populate(response, {
-            path: "retweetData.postedBy"
-          }));
-
-        case 6:
-          res.status(200).send(response);
-          _context.next = 13;
+          results = _context.sent;
+          res.status(200).send(results[0]);
+          _context.next = 11;
           break;
 
-        case 9:
-          _context.prev = 9;
+        case 7:
+          _context.prev = 7;
           _context.t0 = _context["catch"](0);
           console.log(_context.t0);
-          res.sendStatus(400);
+          res.status(400);
 
-        case 13:
+        case 11:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[0, 9]]);
+  }, null, null, [[0, 7]]);
 });
-router.post('/', function _callee2(req, res, next) {
-  var postData, newPost, populatedNewPost;
+router.get('/', function _callee2(req, res, next) {
+  var results;
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
-          if (req.body.content) {
-            _context2.next = 3;
-            break;
-          }
+          _context2.next = 2;
+          return regeneratorRuntime.awrap(getPosts());
 
-          console.log("content param of request not received");
-          return _context2.abrupt("return", res.sendStatus(400));
+        case 2:
+          results = _context2.sent;
+          res.status(200).send(results); // try {
+          //     let response = await Post.find().populate("postedBy")
+          //     .populate("retweetData")
+          //     .sort({ "createdAt": -1 })
+          //     await User.populate(response, {path: "retweetData.postedBy"})
+          //     res.status(200).send(response)
+          // }
+          // catch (err) {
+          //     console.log(err)
+          //     res.sendStatus(400)
+          // }
 
-        case 3:
-          postData = {
-            content: req.body.content,
-            postedBy: req.session.user
-          };
-          _context2.prev = 4;
-          _context2.next = 7;
-          return regeneratorRuntime.awrap(Post.create(postData));
-
-        case 7:
-          newPost = _context2.sent;
-          _context2.next = 10;
-          return regeneratorRuntime.awrap(User.populate(newPost, {
-            path: "postedBy"
-          }));
-
-        case 10:
-          populatedNewPost = _context2.sent;
-          res.status(201).send(populatedNewPost);
-          _context2.next = 18;
-          break;
-
-        case 14:
-          _context2.prev = 14;
-          _context2.t0 = _context2["catch"](4);
-          console.log("asynchronous server response: ".concat(_context2.t0));
-          return _context2.abrupt("return", res.sendStatus(400));
-
-        case 18:
+        case 4:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[4, 14]]);
+  });
 });
-router.put('/:id/like', function _callee3(req, res, next) {
-  var postId, userId, isLiked, option, post;
+router.post('/', function _callee3(req, res, next) {
+  var postData, newPost, populatedNewPost;
   return regeneratorRuntime.async(function _callee3$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
+        case 0:
+          if (!req.body.replyTo) {
+            _context3.next = 2;
+            break;
+          }
+
+          return _context3.abrupt("return", console.log(req.body.replyTo));
+
+        case 2:
+          if (req.body.content) {
+            _context3.next = 5;
+            break;
+          }
+
+          console.log("content param of request not received");
+          return _context3.abrupt("return", res.sendStatus(400));
+
+        case 5:
+          postData = {
+            content: req.body.content,
+            postedBy: req.session.user
+          };
+          _context3.prev = 6;
+          _context3.next = 9;
+          return regeneratorRuntime.awrap(Post.create(postData));
+
+        case 9:
+          newPost = _context3.sent;
+          _context3.next = 12;
+          return regeneratorRuntime.awrap(User.populate(newPost, {
+            path: "postedBy"
+          }));
+
+        case 12:
+          populatedNewPost = _context3.sent;
+          res.status(201).send(populatedNewPost);
+          _context3.next = 20;
+          break;
+
+        case 16:
+          _context3.prev = 16;
+          _context3.t0 = _context3["catch"](6);
+          console.log("asynchronous server response: ".concat(_context3.t0));
+          return _context3.abrupt("return", res.sendStatus(400));
+
+        case 20:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  }, null, null, [[6, 16]]);
+});
+router.put('/:id/like', function _callee4(req, res, next) {
+  var postId, userId, isLiked, option, post;
+  return regeneratorRuntime.async(function _callee4$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
         case 0:
           postId = req.params.id; //we receive the post information for the post being liked
 
@@ -118,7 +148,7 @@ router.put('/:id/like', function _callee3(req, res, next) {
           isLiked = req.session.user.likes && req.session.user.likes.includes(postId);
           option = isLiked ? "$pull" : "$addToSet"; //insert user like
 
-          _context3.next = 6;
+          _context4.next = 6;
           return regeneratorRuntime.awrap(User.findByIdAndUpdate(userId, _defineProperty({}, option, {
             likes: postId
           }), {
@@ -129,8 +159,8 @@ router.put('/:id/like', function _callee3(req, res, next) {
           }));
 
         case 6:
-          req.session.user = _context3.sent;
-          _context3.next = 9;
+          req.session.user = _context4.sent;
+          _context4.next = 9;
           return regeneratorRuntime.awrap(Post.findByIdAndUpdate(postId, _defineProperty({}, option, {
             likes: userId
           }), {
@@ -138,27 +168,27 @@ router.put('/:id/like', function _callee3(req, res, next) {
           }));
 
         case 9:
-          post = _context3.sent;
+          post = _context4.sent;
           res.status(200).send(post);
 
         case 11:
         case "end":
-          return _context3.stop();
+          return _context4.stop();
       }
     }
   });
 });
-router.post('/:id/retweets', function _callee4(req, res, next) {
+router.post('/:id/retweets', function _callee5(req, res, next) {
   var postId, userId, deletedPost, option, repost, post;
-  return regeneratorRuntime.async(function _callee4$(_context4) {
+  return regeneratorRuntime.async(function _callee5$(_context5) {
     while (1) {
-      switch (_context4.prev = _context4.next) {
+      switch (_context5.prev = _context5.next) {
         case 0:
           postId = req.params.id; //we receive the post information for the post being liked
 
           userId = req.session.user._id; //try and delete retweet
 
-          _context4.next = 4;
+          _context5.next = 4;
           return regeneratorRuntime.awrap(Post.findOneAndDelete({
             postedBy: userId,
             retweetData: postId
@@ -168,16 +198,16 @@ router.post('/:id/retweets', function _callee4(req, res, next) {
           }));
 
         case 4:
-          deletedPost = _context4.sent;
+          deletedPost = _context5.sent;
           option = deletedPost != null ? "$pull" : "$addToSet";
           repost = deletedPost;
 
           if (!(repost == null)) {
-            _context4.next = 11;
+            _context5.next = 11;
             break;
           }
 
-          _context4.next = 10;
+          _context5.next = 10;
           return regeneratorRuntime.awrap(Post.create({
             postedBy: userId,
             retweetData: postId
@@ -187,10 +217,10 @@ router.post('/:id/retweets', function _callee4(req, res, next) {
           }));
 
         case 10:
-          repost = _context4.sent;
+          repost = _context5.sent;
 
         case 11:
-          _context4.next = 13;
+          _context5.next = 13;
           return regeneratorRuntime.awrap(User.findByIdAndUpdate(userId, _defineProperty({}, option, {
             retweets: repost._id
           }), {
@@ -201,8 +231,8 @@ router.post('/:id/retweets', function _callee4(req, res, next) {
           }));
 
         case 13:
-          req.session.user = _context4.sent;
-          _context4.next = 16;
+          req.session.user = _context5.sent;
+          _context5.next = 16;
           return regeneratorRuntime.awrap(Post.findByIdAndUpdate(postId, _defineProperty({}, option, {
             retweetUsers: userId
           }), {
@@ -213,22 +243,54 @@ router.post('/:id/retweets', function _callee4(req, res, next) {
           }));
 
         case 16:
-          post = _context4.sent;
-          res.status(200).send(post); // res.status(200).send(postId)
-          // let option = isLiked ? "$pull" : "$addToSet"
-          // //insert user like
-          // req.session.user = await User.findByIdAndUpdate(userId, { [option]: { likes: postId } }, {new: true})
-          // .catch((err)=>{console.log(err)
-          // res.sendStatus(400)})
-          // //insert post like
-          // let post = await Post.findByIdAndUpdate(postId, { [option]: { likes: userId } },{new:true})
-          // res.status(200).send(post)
+          post = _context5.sent;
+          res.status(200).send(post);
 
         case 18:
         case "end":
-          return _context4.stop();
+          return _context5.stop();
       }
     }
   });
 });
+
+function getPosts(Id) {
+  var IdCheck, results;
+  return regeneratorRuntime.async(function getPosts$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          _context6.prev = 0;
+          IdCheck = Id !== undefined ? {
+            _id: Id
+          } : null;
+          console.log(IdCheck);
+          _context6.next = 5;
+          return regeneratorRuntime.awrap(Post.find(IdCheck).populate("postedBy").populate("retweetData").sort({
+            "createdAt": -1
+          }));
+
+        case 5:
+          results = _context6.sent;
+          _context6.next = 8;
+          return regeneratorRuntime.awrap(User.populate(results, {
+            path: "retweetData.postedBy"
+          }));
+
+        case 8:
+          return _context6.abrupt("return", _context6.sent);
+
+        case 11:
+          _context6.prev = 11;
+          _context6.t0 = _context6["catch"](0);
+          console.log(_context6.t0);
+
+        case 14:
+        case "end":
+          return _context6.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
 module.exports = router;

@@ -18,16 +18,3 @@ $(document).ready(function () {
     });
   });
 });
-
-function outputPosts(posts, container) {
-  container.html("");
-
-  if (!posts) {
-    return container.append("<span class='no results'>No Results Found</span>");
-  }
-
-  posts.forEach(function (post) {
-    var html = createPostHtml(post);
-    container.append(html);
-  });
-}

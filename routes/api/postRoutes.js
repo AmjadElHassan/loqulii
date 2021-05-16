@@ -11,21 +11,40 @@ const session = require('express-session')
 app.use(bodyParser.urlencoded({ extended: false }))
 
 
-router.get('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
-    try {
-        let response = await Post.find().populate("postedBy")
-        .populate("retweetData")
-        .sort({ "createdAt": -1 })
-        await User.populate(response, {path: "retweetData.postedBy"})
-        res.status(200).send(response)
+router.get('/:id',async (req,res,next)=>{
+    try{
+        let results = await getPosts(req.params.id)
+        res.status(200).send(results[0])
     }
-    catch (err) {
+    catch(err){
         console.log(err)
-        res.sendStatus(400)
+        res.status(400)
     }
 })
 
+router.get('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
+    let results = await getPosts()
+    res.status(200).send(results)
+
+    // try {
+    //     let response = await Post.find().populate("postedBy")
+    //     .populate("retweetData")
+    //     .sort({ "createdAt": -1 })
+    //     await User.populate(response, {path: "retweetData.postedBy"})
+    //     res.status(200).send(response)
+    // }
+    // catch (err) {
+    //     console.log(err)
+    //     res.sendStatus(400)
+    // }
+})
+
 router.post('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
+    
+    if (req.body.replyTo){
+        return console.log(req.body.replyTo)
+    }
+
     if (!req.body.content) {
         console.log("content param of request not received");
         return res.sendStatus(400)
@@ -98,19 +117,23 @@ router.post('/:id/retweets', async (req, res, next) => {
         })
 
     res.status(200).send(post)
-
-    // res.status(200).send(postId)
-
-
-    // let option = isLiked ? "$pull" : "$addToSet"
-    // //insert user like
-    // req.session.user = await User.findByIdAndUpdate(userId, { [option]: { likes: postId } }, {new: true})
-    // .catch((err)=>{console.log(err)
-    // res.sendStatus(400)})
-    // //insert post like
-    // let post = await Post.findByIdAndUpdate(postId, { [option]: { likes: userId } },{new:true})
-    // res.status(200).send(post)
 })
+
+async function getPosts(Id){
+    try {
+        let IdCheck = Id!==undefined ? {_id:Id}: null
+        console.log(IdCheck)
+        let results = await Post.find(IdCheck).populate("postedBy")
+        .populate("retweetData")
+        .sort({ "createdAt": -1 })
+
+
+     return await User.populate(results, {path: "retweetData.postedBy"})
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
 
 
 

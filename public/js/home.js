@@ -7,14 +7,3 @@ $(document).ready(()=>{
         outputPosts(response,$(".postsContainer"))
     })
 })
-
-function outputPosts(posts, container){
-    container.html("")
-    if (!posts){
-        return container.append("<span class='no results'>No Results Found</span>")
-    }
-    posts.forEach(post=>{
-        let html = createPostHtml(post)
-        container.append(html)
-    })
-}

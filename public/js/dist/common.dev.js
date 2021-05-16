@@ -1,10 +1,11 @@
 "use strict";
 
 // const session = require("express-session")
-$("#postTextarea").keyup(function (event) {
+$("#postTextarea, #replyTextarea").keyup(function (event) {
   var textBox = $(event.target);
   var value = textBox.val().trim();
-  var submitButton = $("#submitPostButton");
+  var isModal = textBox.parents(".modal").length == 1;
+  var submitButton = isModal ? $("#submitReply") : $("#submitPostButton");
 
   if (submitButton.length === 0) {
     return alert("no submit button found");
@@ -17,33 +18,62 @@ $("#postTextarea").keyup(function (event) {
 
   submitButton.prop("disabled", false);
 });
-$("#submitPostButton").click(function () {
-  var button = $(event.target);
-  var textbox = $("#postTextarea").val().trim();
-  var data = {
-    content: textbox
-  };
-  $.post("/api/posts", data, function _callee(postData, status, xhr) {
-    var html;
-    return regeneratorRuntime.async(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            _context.next = 2;
-            return regeneratorRuntime.awrap(createPostHtml(postData));
+$("#submitPostButton, #submitReply").click(function _callee2() {
+  var button, textbox, isModal, textButton, data, originalPost;
+  return regeneratorRuntime.async(function _callee2$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          button = $(event.target);
+          textbox = $("#postTextarea");
+          isModal = button.parents(".modal").length == 1;
+          textButton = isModal ? $("#replyTextarea") : $("#postTextarea");
+          textbox = $("#postTextarea").val().trim();
+          data = {
+            content: textbox
+          };
 
-          case 2:
-            html = _context.sent;
-            $(".postsContainer").prepend(html);
-            $("#postTextarea").val("");
-            button.prop("disabled", true);
+          if (!isModal) {
+            _context2.next = 11;
+            break;
+          }
 
-          case 6:
-          case "end":
-            return _context.stop();
-        }
+          _context2.next = 9;
+          return regeneratorRuntime.awrap(button.data().id);
+
+        case 9:
+          originalPost = _context2.sent;
+          data.replyTo = originalPost;
+
+        case 11:
+          $.post("/api/posts", data, function _callee(postData, status, xhr) {
+            var html;
+            return regeneratorRuntime.async(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    _context.next = 2;
+                    return regeneratorRuntime.awrap(createPostHtml(postData));
+
+                  case 2:
+                    html = _context.sent;
+                    $(".postsContainer").prepend(html);
+                    $("#postTextarea").val("");
+                    button.prop("disabled", true);
+
+                  case 6:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            });
+          });
+
+        case 12:
+        case "end":
+          return _context2.stop();
       }
-    });
+    }
   });
 });
 $(document).on("click", ".likeButton", function (event) {
@@ -94,6 +124,41 @@ $(document).on("click", ".retweetButton", function (event) {
     }
   });
 });
+$("#replyModal").on("show.bs.modal", function _callee3(event) {
+  var button, postId;
+  return regeneratorRuntime.async(function _callee3$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          button = $(event.relatedTarget);
+          postId = getPostId(button);
+          $(submitReply).data("id", postId);
+          $.get("/api/posts/".concat(postId), function (results) {
+            outputPosts(results, $("#originalPostContainer"));
+            console.log('okay');
+          });
+
+        case 4:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  });
+});
+$("#replyModal").on("hidden.bs.modal", function _callee4(event) {
+  return regeneratorRuntime.async(function _callee4$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          $("#originalPostContainer").html("");
+
+        case 1:
+        case "end":
+          return _context4.stop();
+      }
+    }
+  });
+});
 
 function getPostId(target) {
   var isRoot = target.hasClass("post");
@@ -132,7 +197,7 @@ function createPostHtml(postData) {
     retweetText = "<span>\n        <i class=\"fas fa-retweet\"></i>\n        Retweeted by <a href=\"/profile/".concat(retweetedBy, "\">\n        ").concat(retweetedBy, "\n        </a>\n        </span>");
   }
 
-  return "<div class=\"post\" data-id=\"".concat(postData._id, "\">\n                <div class=\"postActionContainer\">\n                    ").concat(retweetText, "\n                </div>\n                <div class=\"mainContentContainer\">\n                    <div class=\"userImageContainer\">\n                        <img src=\"").concat(user.profilePic, "\">\n                    </div>\n                    <div class=\"postContentContainer\">\n                        <div class=\"header\">\n                            <a class=\"displayName\" href=\"/profile/").concat(user.username, "\">\n                                ").concat(userRealName, "\n                            </a>\n                            <span class=\"username\">@").concat(user.username, "</span>\n                            <span class=\"date\">").concat(timestamp, "</span>\n                        </div>\n                        <div class=\"postBody\">\n                            <span>").concat(postContent || postData.retweetData, "</span>\n                        </div>\n                        <div class=\"postFooter\">\n                            <div class=\"postButtonContainer\">\n                                <button>\n                                    <i class=\"far fa-comment-alt\"></i>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer green\">\n                                <button class=\"retweetButton ").concat(retweetButtonActiveClass, "\">\n                                    <i class=\"fas fa-retweet\"></i>\n                                    <span>").concat(postData.retweetUsers.length || "", "</span>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer red\">\n                                <button class=\"likeButton ").concat(likeButtonActiveClass, "\">\n                                    <i class=\"far fa-heart\"></i>\n                                    <span>").concat(postData.likes.length || "", "</span>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n                    \n                </div>\n    </div>");
+  return "<div class=\"post\" data-id=\"".concat(postData._id, "\">\n                <div class=\"postActionContainer\">\n                    ").concat(retweetText, "\n                </div>\n                <div class=\"mainContentContainer\">\n                    <div class=\"userImageContainer\">\n                        <img src=\"").concat(user.profilePic, "\">\n                    </div>\n                    <div class=\"postContentContainer\">\n                        <div class=\"header\">\n                            <a class=\"displayName\" href=\"/profile/").concat(user.username, "\">\n                                ").concat(userRealName, "\n                            </a>\n                            <span class=\"username\">@").concat(user.username, "</span>\n                            <span class=\"date\">").concat(timestamp, "</span>\n                        </div>\n                        <div class=\"postBody\">\n                            <span>").concat(postContent || postData.retweetData, "</span>\n                        </div>\n                        <div class=\"postFooter\">\n                            <div class=\"postButtonContainer\">\n                                <button class=\"replyButton\" data-toggle=\"modal\" data-target=\"#replyModal\">\n                                    <i class=\"far fa-comment-alt\"></i>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer green\">\n                                <button class=\"retweetButton ").concat(retweetButtonActiveClass, "\">\n                                    <i class=\"fas fa-retweet\"></i>\n                                    <span>").concat(postData.retweetUsers.length || "", "</span>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer red\">\n                                <button class=\"likeButton ").concat(likeButtonActiveClass, "\">\n                                    <i class=\"far fa-heart\"></i>\n                                    <span>").concat(postData.likes.length || "", "</span>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n                    \n                </div>\n    </div>");
 }
 
 function timeDifference(current, previous) {
@@ -157,4 +222,21 @@ function timeDifference(current, previous) {
   } else {
     return Math.round(elapsed / msPerYear) + ' years ago';
   }
+}
+
+function outputPosts(posts, container) {
+  container.html("");
+
+  if (!posts) {
+    return container.append("<span class='no results'>No Results Found</span>");
+  }
+
+  if (!Array.isArray(posts)) {
+    posts = [posts];
+  }
+
+  posts.forEach(function (post) {
+    var html = createPostHtml(post);
+    container.append(html);
+  });
 }
