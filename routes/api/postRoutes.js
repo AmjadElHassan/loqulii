@@ -13,8 +13,23 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 router.get('/:id',async (req,res,next)=>{
     try{
-        let results = await getPosts(req.params.id)
-        res.status(200).send(results[0])
+        let postData = await getPosts({_id: req.params.id})
+        if (postData.length==1){
+            postData = postData[0]
+        }
+
+        let results = {
+            postData: postData,
+        }
+        
+        if (postData.replyTo){
+            console.log('yes')
+            results.replyTo = postData.replyTo
+        }
+
+        results.replies = await getPosts({replyTo: req.params.id})
+        
+        res.status(200).send(results)
     }
     catch(err){
         console.log(err)
@@ -26,36 +41,21 @@ router.get('/', async (req, res, next) => {//we configured the router to handle 
     let results = await getPosts()
     res.status(200).send(results)
 
-    // try {
-    //     let response = await Post.find().populate("postedBy")
-    //     .populate("retweetData")
-    //     .sort({ "createdAt": -1 })
-    //     await User.populate(response, {path: "retweetData.postedBy"})
-    //     res.status(200).send(response)
-    // }
-    // catch (err) {
-    //     console.log(err)
-    //     res.sendStatus(400)
-    // }
 })
 
 router.post('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
-    
-    if (req.body.replyTo){
-        return console.log(req.body.replyTo)
-    }
-
-    if (!req.body.content) {
-        console.log("content param of request not received");
-        return res.sendStatus(400)
-    }
+    console.log(req.body.content)
     let postData = {
         content: req.body.content,
-        postedBy: req.session.user
+        postedBy: req.session.user,
+        replyTo: req.body.replyTo
     }
+    console.log(postData)
+
     try {
         let newPost = await Post.create(postData)
         let populatedNewPost = await User.populate(newPost, { path: "postedBy" })
+        await Post.populate(newPost, {path: "replyTo"})
         res.status(201).send(populatedNewPost)
     } catch (err) {
         console.log(`asynchronous server response: ${err}`)
@@ -64,6 +64,7 @@ router.post('/', async (req, res, next) => {//we configured the router to handle
 })
 
 router.put('/:id/like', async (req, res, next) => {
+
     let postId = req.params.id//we receive the post information for the post being liked
     let userId = req.session.user._id
 
@@ -119,15 +120,29 @@ router.post('/:id/retweets', async (req, res, next) => {
     res.status(200).send(post)
 })
 
-async function getPosts(Id){
+router.delete('/:id', async(req,res,next)=>{
+    try{
+        let postId = {_id: req.params.id}
+        let post = await Post.findOneAndDelete(postId)
+        console.log(post)
+        res.sendStatus(202)
+    }
+    catch(err){
+        console.log(err)
+        res.status(400)
+    }
+})
+
+async function getPosts(searchObject){
     try {
-        let IdCheck = Id!==undefined ? {_id:Id}: null
-        console.log(IdCheck)
+        let IdCheck = searchObject!==undefined ? searchObject: null
         let results = await Post.find(IdCheck).populate("postedBy")
         .populate("retweetData")
+        .populate("replyTo")
         .sort({ "createdAt": -1 })
 
-
+        
+    results = await User.populate(results, {path: "replyTo.postedBy"})
      return await User.populate(results, {path: "retweetData.postedBy"})
     }
     catch (err) {

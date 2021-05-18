@@ -121,6 +121,26 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   border-bottom: 1px solid var(--grayLight);
   flex-shrink: 0;
 }
+.post button {
+  padding: 0 1.2rem;
+  padding-top: 0.25rem;
+  background-color: transparent;
+  border: none;
+  color: var(--grayButtonText);
+}
+.post button:hover {
+  background-color: #d4edff;
+  border-radius: 20px;
+  color: #2755b8;
+}
+.post button i, .post button span {
+  pointer-events: none;
+}
+.post.postFocus {
+  background-color: #f5fbff;
+  border: 2px solid #75b3af;
+  box-shadow: 12px 10px 20px rgba(136, 223, 118, 0.13);
+}
 .post .postActionContainer {
   padding-left: 2rem;
   font-size: 0.8rem;
@@ -149,6 +169,12 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   flex-direction: column;
   flex: 1;
 }
+.post .mainContentContainer .postContentContainer .header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+}
 .post .mainContentContainer .postContentContainer .header * {
   padding-right: 0.5rem;
 }
@@ -161,6 +187,24 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
 .post .mainContentContainer .postContentContainer .header .username, .post .mainContentContainer .postContentContainer .header .date {
   font-size: 0.92rem;
   color: var(--grayText);
+}
+.post .mainContentContainer .postContentContainer .header .date {
+  flex: 1;
+}
+.post .mainContentContainer .postContentContainer .header .creatorButtons {
+  padding: 0;
+}
+.post .mainContentContainer .postContentContainer .header .creatorButtons .deleteButton {
+  padding: 0;
+}
+.post .mainContentContainer .postContentContainer .header .creatorButtons .deleteButton:hover {
+  color: black;
+  background-color: var(--grayLight);
+}
+.post .mainContentContainer .postContentContainer .header .creatorButtons .deleteButton i {
+  width: 1rem;
+  height: 1rem;
+  margin: 0rem 0.5rem;
 }
 .post .mainContentContainer .postContentContainer .postFooter {
   display: flex;
@@ -177,19 +221,4 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
 .post .mainContentContainer .postContentContainer .postFooter .postButtonContainer.green button.active {
   color: #66b155;
   border-radius: 20px;
-}
-.post .mainContentContainer .postContentContainer .postFooter .postButtonContainer button {
-  padding: 0 1.2rem;
-  padding-top: 0.25rem;
-  background-color: transparent;
-  border: none;
-  color: var(--grayButtonText);
-}
-.post .mainContentContainer .postContentContainer .postFooter .postButtonContainer button:hover {
-  background-color: #d4edff;
-  border-radius: 20px;
-  color: #2755b8;
-}
-.post .mainContentContainer .postContentContainer .postFooter .postButtonContainer button i, .post .mainContentContainer .postContentContainer .postFooter .postButtonContainer button span {
-  pointer-events: none;
 }

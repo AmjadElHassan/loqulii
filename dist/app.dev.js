@@ -39,9 +39,15 @@ var registerRoute = require("./routes/registerRoutes");
 
 var logoutRoute = require("./routes/logoutRoutes");
 
+var postPageRoute = require("./routes/postPageRoutes");
+
+var profileRoute = require("./routes/profileRoutes");
+
 app.use("/login", loginRoute);
 app.use("/register", registerRoute);
-app.use("/logout", logoutRoute); //api routes
+app.use("/post", postPageRoute);
+app.use("/logout", logoutRoute);
+app.use("/profile", profileRoute); //api routes
 
 var postRoute = require("./routes/api/postRoutes");
 

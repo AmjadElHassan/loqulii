@@ -1,5 +1,3 @@
-// const session = require("express-session")
-
 $("#postTextarea, #replyTextarea").keyup((event) => {
     let textBox = $(event.target)
     let value = textBox.val().trim()
@@ -19,30 +17,29 @@ $("#postTextarea, #replyTextarea").keyup((event) => {
     submitButton.prop("disabled", false)
 })
 
-$("#submitPostButton, #submitReply").click(async() => {
+$("#submitPostButton, #submitReply").click(() => {
     let button = $(event.target)
-    let textbox = $("#postTextarea")
 
     let isModal = button.parents(".modal").length == 1
-    let textButton = isModal ? $("#replyTextarea") : $("#postTextarea")
-    textbox = $("#postTextarea").val().trim()
-
-
+    let textbox = isModal ? $("#replyTextarea") : $("#postTextarea");
 
     let data = {
-        content: textbox
+        content: textbox.val().trim()
     }
-
-    if (isModal){
-        let originalPost = await button.data().id;
-        data.replyTo = originalPost
+    if (isModal) {
+        let id = button.data().id
+        data.replyTo = id
     }
+    $.post("/api/posts", data, async (postData) => {
 
-    $.post("/api/posts", data, async (postData, status, xhr) => {
+        if (postData.replyTo) {
+            return location.reload()
+        }
         let html = await createPostHtml(postData)
         $(".postsContainer").prepend(html)
         $("#postTextarea").val("")
         button.prop("disabled", true)
+
     })
 
 })
@@ -93,16 +90,13 @@ $(document).on("click", ".retweetButton", (event) => {
 
 })
 
-
 $("#replyModal").on("show.bs.modal", async (event) => {
     let button = $(event.relatedTarget)
     let postId = getPostId(button)
-    $(submitReply).data("id", postId)
+    $("#submitReply").data("id", postId)
 
     $.get(`/api/posts/${postId}`, (results) => {
-        outputPosts(results, $("#originalPostContainer"))
-        console.log('okay')
-
+        outputPosts(results.postData, $("#originalPostContainer"))
     })
 })
 
@@ -110,6 +104,38 @@ $("#replyModal").on("hidden.bs.modal", async (event) => {
     $("#originalPostContainer").html("")
 })
 
+$("#deletePostModal").on("show.bs.modal", async (event) => {
+    let button = $(event.relatedTarget)
+    let postId = getPostId(button)
+    await $("#submitDelete").data("id", postId)
+})
+
+$("#submitDelete").click(async(event)=>{
+    try{
+        let postId = await $(event.target).data("id")
+        console.log(postId)
+        $.ajax({
+            url: `/api/posts/${postId}`,
+            type: "DELETE",
+            success: (response) => {
+                location.reload()
+            }
+        })    
+    }
+    catch(err){
+        console.log(err)
+    }
+})
+
+
+$(document).on("click", ".post", (event) => {
+    let element = $(event.target)
+    let postId = getPostId(element)
+
+    if (postId && !element.is("button")) {
+        window.location.href = `/post/${postId}`
+    }
+})
 
 
 function getPostId(target) {
@@ -122,16 +148,17 @@ function getPostId(target) {
     return postId
 }
 
-function createPostHtml(postData) {
+function createPostHtml(postData, postFocus=false) {
 
+
+    let postFocusClass = postFocus? "postFocus":"" 
     if (!postData) return alert("post object is null")
-
+    let isReply = postData.replyTo ? true : false
     let isRetweet = (postData.retweetData ? true : false)
     retweetedBy = isRetweet ? postData.postedBy.username : null;
 
     postData = isRetweet ? postData.retweetData : postData
 
-    console.log(isRetweet)
     if (!postData.postedBy._id) {//in the case that the postedby is just an object id
         return console.log('User object not populated')
     }
@@ -141,12 +168,11 @@ function createPostHtml(postData) {
 
 
     //pulling information from server of current user logged in
-
     let postContent = postData.content
     let user = postData.postedBy
     let userRealName = user.firstName + ` ${user.lastName}`
     let timestamp = timeDifference(new Date(), new Date(postData.createdAt))
-
+    //retweet indication
     let retweetText = "";
     if (isRetweet) {
         retweetText = `<span>
@@ -156,8 +182,26 @@ function createPostHtml(postData) {
         </a>
         </span>`
     }
+    //reply indication
+    let replyFlag = ""
+    if (isReply&&postData.replyTo._id) {
+        if (!postData.replyTo._id) {
+            return alert("replyTo is not poulated")
+        }
+        let userReplyingTo = postData.replyTo.postedBy.username
+        replyFlag = `<div class="replyFlag">Replying To <a href="/profile/${userReplyingTo}">@${userReplyingTo}</a></div>`
+    }
 
-    return `<div class="post" data-id="${postData._id}">
+    //delete indication
+    let creatorButtons =""
+    if(postData.postedBy._id===userLoggedIn._id){
+        creatorButtons = `<div class="creatorButtons"><button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal" class="deleteButton">
+        <i class="far fa-times-circle"></i>
+        </button>
+        </div>`
+    }
+
+    return `<div class="post ${postFocusClass}" data-id="${postData._id}">
                 <div class="postActionContainer">
                     ${retweetText}
                 </div>
@@ -172,7 +216,9 @@ function createPostHtml(postData) {
                             </a>
                             <span class="username">@${user.username}</span>
                             <span class="date">${timestamp}</span>
+                            ${creatorButtons}
                         </div>
+                        ${replyFlag}
                         <div class="postBody">
                             <span>${postContent || postData.retweetData}</span>
                         </div>
@@ -237,17 +283,38 @@ function timeDifference(current, previous) {
     }
 }
 
-function outputPosts(posts, container){
+function outputPosts(posts, container) {
     container.html("")
-    if (!posts){
+    if (!posts) {
         return container.append("<span class='no results'>No Results Found</span>")
     }
 
-    if (!Array.isArray(posts)){
+    if (!Array.isArray(posts)) {
         posts = [posts]
     }
-    posts.forEach(post=>{
+    posts.forEach(post => {
         let html = createPostHtml(post)
         container.append(html)
+    })
+}
+
+function outputPostsWithReplies(posts, container) {
+    container.html("")
+
+    if (!posts) {
+        return container.append("<span class='no results'>No Results Found</span>")
+    }
+
+    if (posts.replyTo && posts.replyTo._id) {
+        let html = createPostHtml(posts.replyTo)
+        container.append(html)
+    }
+
+    let mainPostHtml = createPostHtml(posts.postData,true)
+    container.append(mainPostHtml)
+
+    posts.replies.forEach(post => {
+        let replyHtml = createPostHtml(post)
+        container.append(replyHtml)
     })
 }

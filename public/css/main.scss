@@ -139,6 +139,29 @@ body {
     cursor: pointer;
     border-bottom: 1px solid var(--grayLight);
     flex-shrink: 0;
+   
+    button{
+        padding:0 1.2rem;
+        padding-top: 0.25rem;
+        background-color: transparent;
+        border:none;
+        color: var(--grayButtonText);   
+        &:hover{
+            background-color: #d4edff;
+            border-radius: 20px;
+            color:  rgb(39, 85, 184);
+            // transform: scale(1.1)
+        }
+        i,span{
+            pointer-events: none
+        }
+    }
+    &.postFocus{
+        background-color: rgb(245, 251, 255);
+        border: 2px solid rgb(117, 179, 175);
+        
+        box-shadow: 12px 10px 20px rgba(136, 223, 118, 0.13);
+    }
     .postActionContainer{
         *{
             color: var(--grayText);
@@ -166,6 +189,10 @@ body {
             flex-direction: column;
             flex:1;
             .header{
+                display:flex;
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: center;
                 *{
                     padding-right: 0.5rem;
                 }
@@ -179,7 +206,27 @@ body {
                     font-size:0.92rem;
                     color: var(--grayText)
                 }
-
+                .date{
+                    flex:1;
+                }
+                .creatorButtons{
+                    padding:0;
+                    .deleteButton{
+                        padding:0;
+                        &:hover{
+                            color: black;
+                            background-color: var(--grayLight);
+                        }
+                        i{
+                            width:1rem;
+                            height:1rem;
+                            margin: 0rem 0.5rem;
+                            
+                            // padding:0 1rem;
+                            // color: purple;    
+                        }
+                    }
+                }
             }
             // .postBody{
             // }
@@ -201,22 +248,7 @@ body {
                             border-radius: 20px;
                         }
                     }
-                    button{
-                        padding:0 1.2rem;
-                        padding-top: 0.25rem;
-                        background-color: transparent;
-                        border:none;
-                        color: var(--grayButtonText);   
-                        &:hover{
-                            background-color: #d4edff;
-                            border-radius: 20px;
-                            color:  rgb(39, 85, 184);
-                            // transform: scale(1.1)
-                        }
-                        i,span{
-                            pointer-events: none
-                        }
-                    }
+                    
                 }
             }
         }

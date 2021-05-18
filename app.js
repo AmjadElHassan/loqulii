@@ -27,10 +27,14 @@ app.use(session({
 const loginRoute = require("./routes/loginRoutes")
 const registerRoute = require("./routes/registerRoutes")
 const logoutRoute = require("./routes/logoutRoutes")
+const postPageRoute = require("./routes/postPageRoutes")
+const profileRoute = require("./routes/profileRoutes")
 
 app.use("/login", loginRoute)
 app.use("/register", registerRoute)
+app.use("/post", postPageRoute)
 app.use("/logout", logoutRoute)
+app.use("/profile", profileRoute)
 
 //api routes
 const postRoute = require("./routes/api/postRoutes")
