@@ -38,8 +38,10 @@ app.use("/profile", profileRoute)
 
 //api routes
 const postRoute = require("./routes/api/postRoutes")
-
-app.use("/api/posts", postRoute)
+const usersRoute = require("./routes/api/usersRoutes")
+app.use("/api/posts", postRoute);
+app.use("/api/users", usersRoute);
+// app.use("/api/users", usersAPIRoute)
 
 
 

@@ -7,24 +7,76 @@ let bcrypt = require("bcrypt")
 const session = require('express-session')
 
 
-router.get('/:id', (req, res, next) => {//we configured the router to handle requests at root "/" 
-    console.log(req.params)
+router.get('/:username', async (req, res, next) => {//we configured the router to handle requests at root "/" 
 
-    if (!req.session.user){
+    if (!req.session.user) {
         return res.status(200).redirect("/")
     }
-    var payLoad = {
-        pageTitle: req.session.user.username,
-        userLoggedIn: req.session.user,
-        userLoggedInJs: JSON.stringify(req.session.user),
-        profileUser: req.session.user
-        }
+    let payLoad = await getPayload(req.params.username,req.session.user)
 
-    console.log(payLoad.postId)
+    res.status(200).render("profilePage", payLoad)
 
-    res.status(200).render("profilePage",payLoad)
+})
+router.get('/:username/replies', async (req, res, next) => {//we configured the router to handle requests at root "/" 
+    if (!req.session.user) {
+        return res.status(200).redirect("/")
+    }
+    let payLoad = await getPayload(req.params.username,req.session.user)
+    payLoad.selectedTab = "replies"
+
+    res.status(200).render("profilePage", payLoad)
+
+})
+router.get('/:username/following', async (req, res, next) => {//we configured the router to handle requests at root "/" 
+    if (!req.session.user) {
+        return res.status(200).redirect("/")
+    }
+    let payLoad = await getPayload(req.params.username,req.session.user)
+    payLoad.selectedTab = "following"
+
+    res.status(200).render("followPage", payLoad)
+
+})
+router.get('/:username/followers', async (req, res, next) => {//we configured the router to handle requests at root "/" 
+    if (!req.session.user) {
+        return res.status(200).redirect("/")
+    }
+    let payLoad = await getPayload(req.params.username,req.session.user)
+    payLoad.selectedTab = "followers"
+
+    res.status(200).render("followPage", payLoad)
 
 })
 
+async function getPayload(username,userLoggedIn) {
+    try {
+        let user = await User.findOne({ username: username })
+        if (!user) {
+
+            user = await User.findById(username)
+
+            if (!user){
+                console.log('wtf')
+                return {
+                    pageTitle: "User Not Found",
+                    userLoggedIn: userLoggedIn,
+                    userLoggedInJs: JSON.stringify(userLoggedIn)            
+                }    
+            }
+        }
+        console.log(user)
+        return {
+            pageTitle: user.username,
+            userLoggedIn: userLoggedIn,
+            userLoggedInJs: JSON.stringify(userLoggedIn),
+            profileUser: user
+        }
+
+    }
+    catch (err) {
+        console.log(err)
+    }
+
+}
 
 module.exports = router

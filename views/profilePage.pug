@@ -1,11 +1,47 @@
 extends layouts/main-layout.pug
 
 block content
-    script.
-        let postId = !{postId}
+    script. 
+        let profileUserId = `!{profileUser._id}`
+        let selectedTab = `!{selectedTab}`
+    if !profileUser
+        p Unknown User
+    else
+        - followingCount = profileUser.following.length
+        - followerCount = profileUser.followers.length
+        .profileHeaderContainer      
+            .coverPhotoContainer
+                .userImageContainer
+                    img(src=profileUser.profilePic, alt="user profile Image")
+            .profileButtonsContainer
+                if profileUser._id != userLoggedIn._id
+                    a.profileButton(href=`/messages/${profileUser._id}`)
+                        i(class="far fa-paper-plane")
 
-    .postsContainer
-    +createPostModals(userLoggedIn)
+                    - let proUserId = profileUser._id.toString();
+                    - if (userLoggedIn.following && userLoggedIn.following.includes(proUserId))
+                        +createFollowButton(profileUser, true)
+                    - else 
+                        +createFollowButton(profileUser, false)
+                    
+            .userDetailContainer
+                span.displayName #{profileUser.firstName} #{profileUser.lastName}
+                span.username @#{profileUser.username}
+                span.description #{profileUser.description}
+
+                .followersContainer
+                    a(href=`/profile/${profileUser.username}/following`)
+                        span#followingValue.value #{followingCount}
+                        span following
+                    a(href=`/profile/${profileUser.username}/followers`)
+                        span#followersValue.value #{followerCount}
+                        span followers
+        .tabsContainer
+            +createTab('posts',`/profile/${profileUser.username}`,selectedTab != "replies")
+            +createTab('replies',`/profile/${profileUser.username}/replies`, selectedTab=="replies")
+        .postsContainer
+
+        +createPostModals(userLoggedIn)
 
 block scripts 
-    script(src="/js/postPage.js")
+    script(src="/js/profile.js")

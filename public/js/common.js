@@ -128,6 +128,42 @@ $("#submitDelete").click(async(event)=>{
 })
 
 
+$(document).on("click", ".followButton", async (event) => {
+    let button = $(event.target)
+    let userId = await button.data().user
+    $.ajax({
+        url: `/api/users/${userId}/follow`,
+        type: "PUT",
+        success: (data,status,xhr) => {
+            if (xhr.status==404){
+                return alert(data)
+            }
+
+            let difference = 1
+
+            if (data.following.includes(userId)) {
+                button.addClass("following")
+                button.text("following")
+            } else {
+                button.removeClass("following")
+                button.text("follow")
+                difference = -1
+            }
+
+            let followersLabel = $("#followersValue")
+            if (followersLabel.length != 0){
+              let followersText = followersLabel.text()
+              followersLabel.text(Number(followersText)+Number(difference))
+            }
+        }
+    })
+    // let postId = getPostId(element)
+
+    // if (postId && !element.is("button")) {
+    //     window.location.href = `/post/${postId}`
+    // }
+})
+
 $(document).on("click", ".post", (event) => {
     let element = $(event.target)
     let postId = getPostId(element)

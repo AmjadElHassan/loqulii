@@ -3,7 +3,7 @@
 // const { create } = require("../../schemas/PostSchema")
 
 $(document).ready(()=>{
-    $.get("/api/posts", async (response) => {
+    $.get("/api/posts", { followingOnly: false}, async (response) => {
         outputPosts(response,$(".postsContainer"))
     })
 })

@@ -1,0 +1,20 @@
+extends layouts/main-layout.pug
+
+block content
+    script. 
+        let profileUserId = `!{profileUser._id}`
+        let selectedTab = `!{selectedTab}`
+    if !profileUser
+        p Unknown User
+    else
+        - followingCount = profileUser.following.length
+        - followerCount = profileUser.followers.length
+
+        .tabsContainer
+            +createTab('following',`/profile/${profileUser.username}/following`,selectedTab != "followers")
+            +createTab('followers',`/profile/${profileUser.username}/followers`, selectedTab=="followers")
+        
+        .resultsContainer
+
+block scripts 
+    script(src="/js/follow.js")

@@ -196,6 +196,56 @@ $("#submitDelete").click(function _callee5(event) {
     }
   }, null, null, [[0, 8]]);
 });
+$(document).on("click", ".followButton", function _callee6(event) {
+  var button, userId;
+  return regeneratorRuntime.async(function _callee6$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          button = $(event.target);
+          _context6.next = 3;
+          return regeneratorRuntime.awrap(button.data().user);
+
+        case 3:
+          userId = _context6.sent;
+          $.ajax({
+            url: "/api/users/".concat(userId, "/follow"),
+            type: "PUT",
+            success: function success(data, status, xhr) {
+              if (xhr.status == 404) {
+                return alert(data);
+              }
+
+              var difference = 1;
+
+              if (data.following.includes(userId)) {
+                button.addClass("following");
+                button.text("following");
+              } else {
+                button.removeClass("following");
+                button.text("follow");
+                difference = -1;
+              }
+
+              var followersLabel = $("#followersValue");
+
+              if (followersLabel.length != 0) {
+                var followersText = followersLabel.text();
+                followersLabel.text(Number(followersText) + Number(difference));
+              }
+            }
+          }); // let postId = getPostId(element)
+          // if (postId && !element.is("button")) {
+          //     window.location.href = `/post/${postId}`
+          // }
+
+        case 5:
+        case "end":
+          return _context6.stop();
+      }
+    }
+  });
+});
 $(document).on("click", ".post", function (event) {
   var element = $(event.target);
   var postId = getPostId(element);

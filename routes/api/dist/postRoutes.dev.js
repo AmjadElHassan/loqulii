@@ -73,19 +73,31 @@ router.get('/:id', function _callee(req, res, next) {
   }, null, null, [[0, 13]]);
 });
 router.get('/', function _callee2(req, res, next) {
-  var results;
+  var searchObj, isReply, results;
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
-          _context2.next = 2;
-          return regeneratorRuntime.awrap(getPosts());
+          //we configured the router to handle requests at root "/" 
+          searchObj = req.query;
+          console.log(req.query);
 
-        case 2:
+          if (searchObj.isReply) {
+            isReply = searchObj.isReply == "true";
+            searchObj.replyTo = {
+              $exists: isReply
+            };
+            delete searchObj.isReply;
+          }
+
+          _context2.next = 5;
+          return regeneratorRuntime.awrap(getPosts(searchObj));
+
+        case 5:
           results = _context2.sent;
           res.status(200).send(results);
 
-        case 4:
+        case 7:
         case "end":
           return _context2.stop();
       }
@@ -294,46 +306,49 @@ router["delete"]('/:id', function _callee6(req, res, next) {
 });
 
 function getPosts(searchObject) {
-  var IdCheck, results;
+  var IdCheck, followingOnlyCheck, results;
   return regeneratorRuntime.async(function getPosts$(_context7) {
     while (1) {
       switch (_context7.prev = _context7.next) {
         case 0:
           _context7.prev = 0;
+          console.log(req.session.user);
           IdCheck = searchObject !== undefined ? searchObject : null;
-          _context7.next = 4;
+          followingOnlyCheck = searchObject.followingOnly == 'true' ? IdCheck = req.session.user.following : null;
+          console.log(followingOnlyCheck);
+          _context7.next = 7;
           return regeneratorRuntime.awrap(Post.find(IdCheck).populate("postedBy").populate("retweetData").populate("replyTo").sort({
             "createdAt": -1
-          }));
-
-        case 4:
-          results = _context7.sent;
-          _context7.next = 7;
-          return regeneratorRuntime.awrap(User.populate(results, {
-            path: "replyTo.postedBy"
           }));
 
         case 7:
           results = _context7.sent;
           _context7.next = 10;
           return regeneratorRuntime.awrap(User.populate(results, {
-            path: "retweetData.postedBy"
+            path: "replyTo.postedBy"
           }));
 
         case 10:
-          return _context7.abrupt("return", _context7.sent);
+          results = _context7.sent;
+          _context7.next = 13;
+          return regeneratorRuntime.awrap(User.populate(results, {
+            path: "retweetData.postedBy"
+          }));
 
         case 13:
-          _context7.prev = 13;
+          return _context7.abrupt("return", _context7.sent);
+
+        case 16:
+          _context7.prev = 16;
           _context7.t0 = _context7["catch"](0);
           console.log(_context7.t0);
 
-        case 16:
+        case 19:
         case "end":
           return _context7.stop();
       }
     }
-  }, null, null, [[0, 13]]);
+  }, null, null, [[0, 16]]);
 }
 
 module.exports = router;
