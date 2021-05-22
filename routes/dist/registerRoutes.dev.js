@@ -57,13 +57,14 @@ router.post('/', function _callee(req, res, next) {
 
         case 18:
           payload = _context.sent;
+          console.log(payload);
 
           if (!(firstName && lastName && username && email && password)) {
-            _context.next = 38;
+            _context.next = 40;
             break;
           }
 
-          _context.next = 22;
+          _context.next = 23;
           return regeneratorRuntime.awrap(User.findOne({
             $or: [{
               username: username
@@ -75,32 +76,33 @@ router.post('/', function _callee(req, res, next) {
             res.status(200).render("register", payload);
           }));
 
-        case 22:
+        case 23:
           existingUser = _context.sent;
 
           if (!(existingUser == null)) {
-            _context.next = 36;
+            _context.next = 38;
             break;
           }
 
-          _context.next = 26;
+          _context.next = 27;
           return regeneratorRuntime.awrap(bcrypt.hash(password, 10));
 
-        case 26:
+        case 27:
           payload.password = _context.sent;
-          _context.next = 29;
+          _context.next = 30;
           return regeneratorRuntime.awrap(User.create(payload));
 
-        case 29:
+        case 30:
           newUser = _context.sent;
+          console.log(newUser);
           req.session.user = newUser;
           console.log(req.session);
           console.log("New User created");
           res.redirect('/');
-          _context.next = 38;
+          _context.next = 40;
           break;
 
-        case 36:
+        case 38:
           //user found
           if (email == existingUser.email) {
             payload.errorMessage = "Email already In use.";
@@ -110,20 +112,20 @@ router.post('/', function _callee(req, res, next) {
 
           res.status(200).render("register", payload);
 
-        case 38:
-          _context.next = 43;
+        case 40:
+          _context.next = 45;
           break;
 
-        case 40:
-          _context.prev = 40;
+        case 42:
+          _context.prev = 42;
           _context.t0 = _context["catch"](0);
           console.log(_context.t0);
 
-        case 43:
+        case 45:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[0, 40]]);
+  }, null, null, [[0, 42]]);
 });
 module.exports = router;

@@ -73,14 +73,14 @@ router.get('/:id', function _callee(req, res, next) {
   }, null, null, [[0, 13]]);
 });
 router.get('/', function _callee2(req, res, next) {
-  var searchObj, isReply, results;
+  var searchObj, isReply, onlyFollowingPosts, results;
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
           //we configured the router to handle requests at root "/" 
           searchObj = req.query;
-          console.log(req.query);
+          console.log(searchObj);
 
           if (searchObj.isReply) {
             isReply = searchObj.isReply == "true";
@@ -90,14 +90,25 @@ router.get('/', function _callee2(req, res, next) {
             delete searchObj.isReply;
           }
 
-          _context2.next = 5;
+          if (searchObj.followingOnly) {
+            onlyFollowingPosts = searchObj.followingOnly == 'true';
+
+            if (onlyFollowingPosts) {
+              searchObj.postedBy = req.session.user.following;
+            }
+
+            delete searchObj.followingOnly;
+          }
+
+          console.log(searchObj);
+          _context2.next = 7;
           return regeneratorRuntime.awrap(getPosts(searchObj));
 
-        case 5:
+        case 7:
           results = _context2.sent;
           res.status(200).send(results);
 
-        case 7:
+        case 9:
         case "end":
           return _context2.stop();
       }
@@ -306,49 +317,46 @@ router["delete"]('/:id', function _callee6(req, res, next) {
 });
 
 function getPosts(searchObject) {
-  var IdCheck, followingOnlyCheck, results;
+  var IdCheck, results;
   return regeneratorRuntime.async(function getPosts$(_context7) {
     while (1) {
       switch (_context7.prev = _context7.next) {
         case 0:
           _context7.prev = 0;
-          console.log(req.session.user);
           IdCheck = searchObject !== undefined ? searchObject : null;
-          followingOnlyCheck = searchObject.followingOnly == 'true' ? IdCheck = req.session.user.following : null;
-          console.log(followingOnlyCheck);
-          _context7.next = 7;
-          return regeneratorRuntime.awrap(Post.find(IdCheck).populate("postedBy").populate("retweetData").populate("replyTo").sort({
+          _context7.next = 4;
+          return regeneratorRuntime.awrap(Post.find(searchObject).populate("postedBy").populate("retweetData").populate("replyTo").sort({
             "createdAt": -1
+          }));
+
+        case 4:
+          results = _context7.sent;
+          _context7.next = 7;
+          return regeneratorRuntime.awrap(User.populate(results, {
+            path: "replyTo.postedBy"
           }));
 
         case 7:
           results = _context7.sent;
           _context7.next = 10;
           return regeneratorRuntime.awrap(User.populate(results, {
-            path: "replyTo.postedBy"
-          }));
-
-        case 10:
-          results = _context7.sent;
-          _context7.next = 13;
-          return regeneratorRuntime.awrap(User.populate(results, {
             path: "retweetData.postedBy"
           }));
 
-        case 13:
+        case 10:
           return _context7.abrupt("return", _context7.sent);
 
-        case 16:
-          _context7.prev = 16;
+        case 13:
+          _context7.prev = 13;
           _context7.t0 = _context7["catch"](0);
           console.log(_context7.t0);
 
-        case 19:
+        case 16:
         case "end":
           return _context7.stop();
       }
     }
-  }, null, null, [[0, 16]]);
+  }, null, null, [[0, 13]]);
 }
 
 module.exports = router;

@@ -185,8 +185,6 @@ function getPostId(target) {
 }
 
 function createPostHtml(postData, postFocus=false) {
-
-
     let postFocusClass = postFocus? "postFocus":"" 
     if (!postData) return alert("post object is null")
     let isReply = postData.replyTo ? true : false

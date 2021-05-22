@@ -24,6 +24,7 @@ router.post('/',async function(req,res,next){//we configured the router to handl
         let password = await req.body.password;    
 
         let payload = await req.body
+        console.log(payload)
         
         if (firstName && lastName && username && email && password){
             let existingUser = await User.findOne({
@@ -39,6 +40,7 @@ router.post('/',async function(req,res,next){//we configured the router to handl
             if (existingUser==null) {
                 payload.password = await bcrypt.hash(password,10)
                 let newUser = await User.create(payload)
+                console.log(newUser)
                 req.session.user = newUser
                 console.log(req.session)
                 console.log("New User created")

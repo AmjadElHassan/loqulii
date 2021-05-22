@@ -38,9 +38,8 @@ router.get('/:id',async (req,res,next)=>{
 })
 
 router.get('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
-
     let searchObj = req.query;
-    console.log(req.query)
+    console.log(searchObj)
 
     if (searchObj.isReply){
         let isReply = (searchObj.isReply=="true")
@@ -48,10 +47,16 @@ router.get('/', async (req, res, next) => {//we configured the router to handle 
         delete searchObj.isReply
     }
 
-
-    let results = await getPosts(searchObj)
+    if (searchObj.followingOnly){
+        let onlyFollowingPosts = (searchObj.followingOnly == 'true')
+        if (onlyFollowingPosts){
+            searchObj.postedBy = req.session.user.following
+        }
+        delete searchObj.followingOnly
+    }
+    console.log(searchObj)
+    let results = await getPosts(searchObj)    
     res.status(200).send(results)
-
 })
 
 router.post('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
@@ -146,19 +151,14 @@ router.delete('/:id', async(req,res,next)=>{
 
 async function getPosts(searchObject){
     try {
-        console.log(req.session.user)
         let IdCheck = searchObject!==undefined ?
          searchObject:
-         null
-        let followingOnlyCheck = searchObject.followingOnly == 'true'?
-            IdCheck = req.session.user.following:
-            null
-        console.log(followingOnlyCheck)
-        let results = await Post.find(IdCheck).populate("postedBy")
+         null;
+        let results = await Post.find(searchObject)
+        .populate("postedBy")
         .populate("retweetData")
         .populate("replyTo")
         .sort({ "createdAt": -1 })
-
         
     results = await User.populate(results, {path: "replyTo.postedBy"})
      return await User.populate(results, {path: "retweetData.postedBy"})
