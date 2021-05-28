@@ -135,6 +135,24 @@ $("#filePhoto").change(function () {
     }
 })
 
+$("#coverPhoto").change(function () {
+    if (this.files && this.files[0]) {
+        let reader = new FileReader()
+        reader.onload = (e) => {
+            let image = document.getElementById('coverPreview')
+            image.src = e.target.result
+            if (cropper !== undefined) {
+                cropper.destroy()
+            }    
+            cropper = new Cropper(image, {
+                aspectRatio: 16 / 9,
+                background: false
+            })
+        }
+        reader.readAsDataURL(this.files[0])
+    }
+})
+
 $("#coverPhotoUploadButton").click((event) => {
     let canvas = cropper.getCroppedCanvas();
 
@@ -153,7 +171,7 @@ $("#coverPhotoUploadButton").click((event) => {
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: () => {
+                success: (res) => {
                     location.reload()
                 }
             })
@@ -182,7 +200,7 @@ $("#imageUploadButton").click((event) => {
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: () => {
+                success: (res) => {
                     location.reload()
                 }
             })

@@ -164,22 +164,19 @@ body {
             position: relative;
 
             img {
-                width: 12.8rem;
-                height: 12.8rem;
-                border-radius: 100px;
-                margin-left: var(--spacing);
+                width: 100%;
+                height: 100%;
                 position: relative;
-                top: 6.4rem;
-                border: 4px solid #fff;
             }
 
             .coverPhotoButton {
-                position: relative;
+                position: absolute;
                 font-size: 3rem;
                 color: rgba(0, 0, 0, 0.6);
                 background-color: transparent;
                 border: none;
-                display: none
+                display: none;
+                bottom: 1rem;
             }
 
             &:hover {
@@ -193,6 +190,10 @@ body {
 
         .userImageContainer {
             position: absolute;
+            width: 10%;
+            height: 10%;
+
+
             img {
                 width: 12.8rem;
                 height: 12.8rem;
@@ -206,7 +207,7 @@ body {
 
             .profilePictureButton {
                 position: relative;
-                margin-left: 10vw;
+                margin-left: 5.5rem;
                 bottom: 42vh;
                 font-size: 3rem;
                 color: rgba(0, 0, 0, 0.6);
@@ -218,8 +219,6 @@ body {
             &:hover {
                 .profilePictureButton {
                     display: block;
-                    width: 100%;
-                    height: 100%;
                 }
             }
         }
@@ -580,7 +579,7 @@ body {
     }
 }
 
-#imagePreview {
+#imagePreview, #coverPreview {
     display: block;
     max-width: 100%;
     width: 100%;

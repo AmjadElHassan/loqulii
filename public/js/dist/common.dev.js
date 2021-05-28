@@ -185,6 +185,27 @@ $("#filePhoto").change(function () {
     reader.readAsDataURL(this.files[0]);
   }
 });
+$("#coverPhoto").change(function () {
+  if (this.files && this.files[0]) {
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      var image = document.getElementById('coverPreview');
+      image.src = e.target.result;
+
+      if (cropper !== undefined) {
+        cropper.destroy();
+      }
+
+      cropper = new Cropper(image, {
+        aspectRatio: 16 / 9,
+        background: false
+      });
+    };
+
+    reader.readAsDataURL(this.files[0]);
+  }
+});
 $("#coverPhotoUploadButton").click(function (event) {
   var canvas = cropper.getCroppedCanvas();
 
@@ -208,7 +229,7 @@ $("#coverPhotoUploadButton").click(function (event) {
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function success() {
+                success: function success(res) {
                   location.reload();
                 }
               });
@@ -247,7 +268,7 @@ $("#imageUploadButton").click(function (event) {
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function success() {
+                success: function success(res) {
                   location.reload();
                 }
               });

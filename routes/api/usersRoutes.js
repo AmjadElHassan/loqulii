@@ -71,6 +71,7 @@ router.get('/:userId/following', async (req, res, next) => {//we configured the 
     }
 })
 
+
 router.post('/profilePicture', upload.single("croppedImage"), async (req, res, next) => {
     try {
         if (!req.file) {
@@ -90,7 +91,35 @@ router.post('/profilePicture', upload.single("croppedImage"), async (req, res, n
             }
 
             req.session.user = await User.findByIdAndUpdate(req.session.user._id, { profilePic: filePath }, {new: true})
-            res.status(204)
+            res.sendStatus(204)
+        })
+    }
+    catch (err) {
+        console.log(err)
+        res.sendStatus(400).send("profile picture upload failed")
+    }
+})
+
+router.post('/coverPhoto', upload.single("croppedImage"), async (req, res, next) => {
+    try {
+        if (!req.file) {
+            console.log('no file uploaded')
+            res.sendStatus(400)
+        }
+
+        let filePath = `/uploads/images/${req.file.filename}.png`
+        let tempPath = req.file.path
+
+        let targetPath = path.join(__dirname, `../../${filePath}`)
+
+        fs.rename(tempPath, targetPath,async error => {
+            if (error != null) {
+                console.log(error);
+                return res.sendStatus(400)
+            }
+
+            req.session.user = await User.findByIdAndUpdate(req.session.user._id, { coverPhoto: filePath }, {new: true})
+            res.sendStatus(204)
         })
     }
     catch (err) {
@@ -98,5 +127,6 @@ router.post('/profilePicture', upload.single("croppedImage"), async (req, res, n
         res.status(400).send("profile picture upload failed")
     }
 })
+
 
 module.exports = router

@@ -209,11 +209,70 @@ router.post('/profilePicture', upload.single("croppedImage"), function _callee5(
 
                     case 5:
                       req.session.user = _context4.sent;
-                      res.status(204);
+                      res.sendStatus(204);
 
                     case 7:
                     case "end":
                       return _context4.stop();
+                  }
+                }
+              });
+            });
+          } catch (err) {
+            console.log(err);
+            res.sendStatus(400).send("profile picture upload failed");
+          }
+
+        case 1:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  });
+});
+router.post('/coverPhoto', upload.single("croppedImage"), function _callee7(req, res, next) {
+  var filePath, tempPath, targetPath;
+  return regeneratorRuntime.async(function _callee7$(_context7) {
+    while (1) {
+      switch (_context7.prev = _context7.next) {
+        case 0:
+          try {
+            if (!req.file) {
+              console.log('no file uploaded');
+              res.sendStatus(400);
+            }
+
+            filePath = "/uploads/images/".concat(req.file.filename, ".png");
+            tempPath = req.file.path;
+            targetPath = path.join(__dirname, "../../".concat(filePath));
+            fs.rename(tempPath, targetPath, function _callee6(error) {
+              return regeneratorRuntime.async(function _callee6$(_context6) {
+                while (1) {
+                  switch (_context6.prev = _context6.next) {
+                    case 0:
+                      if (!(error != null)) {
+                        _context6.next = 3;
+                        break;
+                      }
+
+                      console.log(error);
+                      return _context6.abrupt("return", res.sendStatus(400));
+
+                    case 3:
+                      _context6.next = 5;
+                      return regeneratorRuntime.awrap(User.findByIdAndUpdate(req.session.user._id, {
+                        coverPhoto: filePath
+                      }, {
+                        "new": true
+                      }));
+
+                    case 5:
+                      req.session.user = _context6.sent;
+                      res.sendStatus(204);
+
+                    case 7:
+                    case "end":
+                      return _context6.stop();
                   }
                 }
               });
@@ -225,7 +284,7 @@ router.post('/profilePicture', upload.single("croppedImage"), function _callee5(
 
         case 1:
         case "end":
-          return _context5.stop();
+          return _context7.stop();
       }
     }
   });

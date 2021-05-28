@@ -34,6 +34,10 @@ var UserSchema = new Schema({
     type: String,
     "default": "/images/profilePic.png"
   },
+  coverPhoto: {
+    type: String,
+    "default": "/images/coverPhoto.jpg"
+  },
   likes: [{
     type: Schema.Types.ObjectId,
     ref: 'Post'
