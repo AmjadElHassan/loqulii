@@ -1,21 +1,26 @@
 * {
     --blue: rgb(49, 116, 240);
     --blueLight: #9bd1f9;
-    --blueBackground: rgba(212,237,255,0.6);
+    --blueBackground: rgba(212, 237, 255, 0.6);
     --buttonHoverbg: #d4edff;
-    --grayLight: rgb(230,236,240);
+    --grayLight: rgb(230, 236, 240);
     --spacing: 1rem;
-    --grayText: rgb(101,119,134);
-    --grayButtonText: rgba(0,0,0,0.34);
-    --red: rgb(226,34,94);
+    --grayText: rgb(101, 119, 134);
+    --grayButtonText: rgba(0, 0, 0, 0.34);
+    --red: rgb(226, 34, 94);
+}
+
+.row {
+    margin: 0;
 }
 
 body {
-    h1{
-        font-size:1.2rem;
+    h1 {
+        font-size: 1.2rem;
         font-weight: bold;
-        margin:0;
+        margin: 0;
     }
+
     a {
         color: inherit;
     }
@@ -36,6 +41,7 @@ body {
             justify-content: center;
             transition: 0.5s;
             color: #212529;
+
             &.blue {
                 color: var(--blue);
             }
@@ -55,76 +61,88 @@ body {
         padding: 0;
         border-left: solid 1px var(--grayLight);
         border-right: solid 1px var(--grayLight);
-        .titleContainer{
+
+        .titleContainer {
             height: 3rem;
             padding: 0 var(--spacing);
             border-bottom: solid 1px var(--grayLight);
             border-top: solid 1px var(--grayLight);
             flex-shrink: 0;
-            h1{
-                flex:1;
+
+            h1 {
+                flex: 1;
                 margin: 0.7rem 0;
             }
         }
     }
-    .postFormContainer{
+
+    .postFormContainer {
         display: flex;
         padding: var(--spacing);
         border-bottom: 10px solid rgb(230, 236, 240);
         flex-shrink: 0;
-        .userImageContainer{
+
+        .userImageContainer {
             width: 50px;
             height: 50px;
+
             img {
                 width: 100%;
                 border-radius: 50%;
                 background-color: white;
             }
         }
-        .textareaContainer{
-            flex:1;
+
+        .textareaContainer {
+            flex: 1;
             padding-left: var(--spacing);
-            textarea{
+
+            textarea {
                 width: 100%;
                 border: none;
                 resize: none;
                 font-size: 1.1rem;
             }
-            .buttonsContainer{
-                #submitPostButton{
+
+            .buttonsContainer {
+                #submitPostButton {
                     background: var(--blue);
                     color: white;
                     border: none;
                     border-radius: 40px;
                     padding: 0.5rem 1rem;
-                    &:disabled{
+
+                    &:disabled {
                         background-color: var(--blueLight);
                     }
                 }
             }
         }
     }
-    #replyModal{
-        padding:0;
-        .modal-dialog{
-            .modal-header{
-                span{
+
+    #replyModal {
+        padding: 0;
+
+        .modal-dialog {
+            .modal-header {
+                span {
                     font-weight: bolder;
                     font-size: 2rem;
                 }
             }
-            .modal-content{
-                .modal-body{
-                    #originalPostContainer{
-                        .post{
-                            padding:0;
+
+            .modal-content {
+                .modal-body {
+                    #originalPostContainer {
+                        .post {
+                            padding: 0;
                             padding-bottom: var(--spacing)
                         }
                     }
 
-                    .postFormContainer{
+                    .postFormContainer {
                         border-bottom: none;
-                        padding:0;
+                        padding: 0;
                         padding-top: var(--spacing)
                     }
                 }
@@ -133,29 +151,87 @@ body {
     }
 }
 
-.profileHeaderContainer{
+.profileHeaderContainer {
     margin-bottom: 0.7rem;
-    .coverPhotoContainer{
-        height:15rem;
+
+    .coverPhotoSection {
+        height: 30vh;
         background-color: var(--blue);
-        .userImageContainer{
+
+        .coverPhotoContainer {
+            height: 100%;
+            width: 100%;    
             position: relative;
-            img{
-                width:12.8rem;
-                height:12.8rem;
+
+            img {
+                width: 12.8rem;
+                height: 12.8rem;
                 border-radius: 100px;
                 margin-left: var(--spacing);
-                position: absolute;
+                position: relative;
                 top: 6.4rem;
                 border: 4px solid #fff;
             }
+
+            .coverPhotoButton {
+                position: relative;
+                font-size: 3rem;
+                color: rgba(0, 0, 0, 0.6);
+                background-color: transparent;
+                border: none;
+                display: none
+            }
+
+            &:hover {
+                .coverPhotoButton {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        }
+
+        .userImageContainer {
+            position: absolute;
+            img {
+                width: 12.8rem;
+                height: 12.8rem;
+                border-radius: 100px;
+                margin-left: var(--spacing);
+                position: relative;
+                border: 4px solid #fff;
+                bottom:10rem;
+
+            }
+
+            .profilePictureButton {
+                position: relative;
+                margin-left: 10vw;
+                bottom: 42vh;
+                font-size: 3rem;
+                color: rgba(0, 0, 0, 0.6);
+                background-color: transparent;
+                border: none;
+                display: none;
+            }
+
+            &:hover {
+                .profilePictureButton {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
         }
     }
-    .profileButtonsContainer{
+
+    .profileButtonsContainer {
         text-align: right;
         padding: var(--spacing);
         min-height: 4rem;
-        .profileButton,.followButton{
+
+        .profileButton,
+        .followButton {
             background-color: transparent;
             border: 1px solid var(--blue);
             color: var(--blue);
@@ -164,48 +240,59 @@ body {
             border-radius: 60px;
             display: inline-block;
             margin-left: var(--spacing);
-            &:hover{
+
+            &:hover {
                 color: var(--blue);
                 background-color: var(--blueBackground);
                 text-decoration: none;
 
             }
         }
-        .followButton.following{
+
+        .followButton.following {
             background-color: var(--blue);
             color: #fff;
         }
     }
-    .userDetailContainer{
-        display:flex;
+
+    .userDetailContainer {
+        display: flex;
         flex-direction: column;
         padding: 0 var(--spacing);
-        .displayName{
+
+        .displayName {
             font-weight: bolder;
             font-size: 1.3rem;
         }
-        .username{
-            font-size:1rem;
+
+        .username {
+            font-size: 1rem;
             // font-weight: bold;
             color: color(--grayText);
         }
-        .followersContainer{
+
+        .followersContainer {
             color: color(--grayText);
-            *{
+
+            * {
                 text-decoration: none;
             }
-            a{
-                margin-right:1rem;
-                span{
-                    display:inline-block;
-                    &:hover{
+
+            a {
+                margin-right: 1rem;
+
+                span {
+                    display: inline-block;
+
+                    &:hover {
                         border-bottom: solid 1px rgba(161, 161, 161, 0.651);
                     }
                 }
             }
-            .value{
+
+            .value {
                 font-weight: bold;
-                margin-right:0.5rem;
+                margin-right: 0.5rem;
                 color: var(--blue);
             }
         }
@@ -213,53 +300,60 @@ body {
 
 }
 
-.tabsContainer{
-    display:flex;
+.tabsContainer {
+    display: flex;
     flex-direction: row;
     border-bottom: 1px solid var(--grayLight);
     flex-shrink: 0;
-    .tab{
-        flex:1;
-        height:3.1rem;
-        display:flex;
+
+    .tab {
+        flex: 1;
+        height: 3.1rem;
+        display: flex;
         justify-content: center;
         align-items: center;
         color: var(--grayText);
         font-weight: bold;
-        &:hover{
+
+        &:hover {
             color: var(--blue);
             background: var(--blueBackground);
         }
-        &.active{
-            color:var(--blue);
+
+        &.active {
+            color: var(--blue);
             border-bottom: 2px solid var(--blue);
         }
-        a{
-            span{
-                text-align:center
+
+        a {
+            span {
+                text-align: center
             }
         }
     }
 }
 
-.resultsContainer{
-    display:flex;
+.resultsContainer {
+    display: flex;
     flex-direction: column;
-    .user{
-        padding:var(--spacing);
+
+    .user {
+        padding: var(--spacing);
         display: flex;
         border-bottom: 1px solid var(--grayLight);
         flex-direction: row;
-        .userDetailContainer{
-            display:flex;
+
+        .userDetailContainer {
+            display: flex;
             flex-direction: row;
             align-items: center;
-            flex:1;
+            flex: 1;
             padding: 0 var(--spacing);
         }
-    }   
+    }
 }
-.followButton{
+
+.followButton {
     background-color: transparent;
     border: 1px solid var(--blue);
     color: var(--blue);
@@ -268,146 +362,174 @@ body {
     border-radius: 60px;
     display: inline-block;
     margin-left: var(--spacing);
-    &:hover{
+
+    &:hover {
         color: var(--blue);
         background-color: var(--blueBackground);
         text-decoration: none;
 
     }
 }
-.followButton.following{
+
+.followButton.following {
     background-color: var(--blue);
     color: #fff;
 }
 
-.post{
-    display:flex;
+.post {
+    display: flex;
     flex-direction: column;
     padding: var(--spacing);
     cursor: pointer;
     border-bottom: 1px solid var(--grayLight);
     flex-shrink: 0;
-   
-    button{
-        padding:0 1.2rem;
+
+    button {
+        padding: 0 1.2rem;
         padding-top: 0.25rem;
         background-color: transparent;
-        border:none;
-        color: var(--grayButtonText);   
-        &:hover{
+        border: none;
+        color: var(--grayButtonText);
+
+        &:hover {
             background-color: #d4edff;
             border-radius: 20px;
-            color:  rgb(39, 85, 184);
+            color: rgb(39, 85, 184);
             // transform: scale(1.1)
         }
-        i,span{
+
+        i,
+        span {
             pointer-events: none
         }
     }
-    &.postFocus{
+
+    &.postFocus {
         background-color: rgb(245, 251, 255);
         border: 2px solid rgb(117, 179, 175);
-        
+
         box-shadow: 12px 10px 20px rgba(136, 223, 118, 0.13);
     }
-    .postActionContainer{
-        *{
+
+    .postActionContainer {
+        * {
             color: var(--grayText);
         }
+
         padding-left: 2rem;
         font-size:0.8rem;
         margin-bottom: 0.2rem;
         font-weight: 500;
     }
-    .mainContentContainer{
-        flex:1;
+
+    .mainContentContainer {
+        flex: 1;
         display: flex;
-        .userImageContainer{
+
+        .userImageContainer {
             width: 50px;
             height: 50px;
+
             img {
                 width: 100%;
                 border-radius: 50%;
                 background-color: white;
             }
         }
-        .postContentContainer{
+
+        .postContentContainer {
             padding-left: var(--spacing);
-            display:flex;
+            display: flex;
             flex-direction: column;
-            flex:1;
-            .header{
-                display:flex;
+            flex: 1;
+
+            .header {
+                display: flex;
                 flex-direction: row;
                 align-items: flex-start;
                 justify-content: center;
-                *{
+
+                * {
                     padding-right: 0.5rem;
                 }
-                .displayName{
+
+                .displayName {
                     font-weight: bold;
-                    &:hover{
+
+                    &:hover {
                         text-decoration: underline;
                     }
                 }
-                .username,.date{
-                    font-size:0.92rem;
+
+                .username,
+                .date {
+                    font-size: 0.92rem;
                     color: var(--grayText)
                 }
-                .date{
-                    flex:1;
+
+                .date {
+                    flex: 1;
                 }
-                .creatorButtons{
-                    padding:0;
-                    .deleteButton{
-                        padding:0;
-                        &:hover{
+
+                .creatorButtons {
+                    padding: 0;
+
+                    .deleteButton {
+                        padding: 0;
+
+                        &:hover {
                             color: black;
                             background-color: var(--grayLight);
                         }
-                        i{
-                            width:1rem;
-                            height:1rem;
+
+                        i {
+                            width: 1rem;
+                            height: 1rem;
                             margin: 0rem 0.5rem;
-                            
+
                             // padding:0 1rem;
                             // color: purple;    
                         }
                     }
                 }
             }
+
             // .postBody{
             // }
-            .postFooter{
-                display:flex;
+            .postFooter {
+                display: flex;
                 align-items: center;
-                .postButtonContainer{
-                    flex:1;
-                    display:flex;
+
+                .postButtonContainer {
+                    flex: 1;
+                    display: flex;
                     align-items: flex-start;
-                    &.red{
-                        button.active{
+
+                    &.red {
+                        button.active {
                             color: red;
                         }
                     }
-                    &.green{
-                        button.active{
+
+                    &.green {
+                        button.active {
                             color: rgb(102, 177, 85);
                             border-radius: 20px;
                         }
                     }
-                    
+
                 }
             }
         }
-        
+
     }
 }
 
 //usable all over the place
-.userImageContainer{
+.userImageContainer {
     width: 50px;
     height: 50px;
+
     img {
         width: 100%;
         border-radius: 50%;
@@ -415,37 +537,51 @@ body {
     }
 }
 
-.userDetailContainer{
-    display:flex;
+.userDetailContainer {
+    display: flex;
     flex-direction: column;
     padding: 0 var(--spacing);
-    .displayName{
+
+    .displayName {
         font-weight: bolder;
         font-size: 1.3rem;
     }
-    .username{
-        font-size:1rem;
+
+    .username {
+        font-size: 1rem;
         // font-weight: bold;
         color: color(--grayText);
     }
-    .followersContainer{
+
+    .followersContainer {
         color: color(--grayText);
-        *{
+
+        * {
             text-decoration: none;
         }
-        a{
-            margin-right:1rem;
-            span{
-                display:inline-block;
-                &:hover{
+
+        a {
+            margin-right: 1rem;
+
+            span {
+                display: inline-block;
+
+                &:hover {
                     border-bottom: solid 1px rgba(161, 161, 161, 0.651);
                 }
             }
         }
-        .value{
+
+        .value {
             font-weight: bold;
-            margin-right:0.5rem;
+            margin-right: 0.5rem;
             color: var(--blue);
         }
     }
+}
+
+#imagePreview {
+    display: block;
+    max-width: 100%;
+    width: 100%;
 }

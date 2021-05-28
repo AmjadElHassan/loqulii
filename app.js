@@ -13,6 +13,7 @@ require('dotenv').config()
 app.set("view engine", "pug")
 app.set("views","views")
 
+//passive tools
 app.use(morgan("dev"))
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(express.static(path.join(__dirname,"public")))//this serves all of the contents of our public directory as a static file to our client
@@ -29,20 +30,20 @@ const registerRoute = require("./routes/registerRoutes")
 const logoutRoute = require("./routes/logoutRoutes")
 const postPageRoute = require("./routes/postPageRoutes")
 const profileRoute = require("./routes/profileRoutes")
+const uploadRoute = require("./routes/uploadRoutes")
 
 app.use("/login", loginRoute)
 app.use("/register", registerRoute)
 app.use("/post", postPageRoute)
 app.use("/logout", logoutRoute)
 app.use("/profile", profileRoute)
+app.use("/uploads", uploadRoute)
 
 //api routes
 const postRoute = require("./routes/api/postRoutes")
 const usersRoute = require("./routes/api/usersRoutes")
 app.use("/api/posts", postRoute);
 app.use("/api/users", usersRoute);
-// app.use("/api/users", usersAPIRoute)
-
 
 
 app.get('/', middleware.requireLogin, (req,res,next)=>{

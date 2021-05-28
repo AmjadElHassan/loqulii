@@ -44,7 +44,6 @@ router.get('/:id', function _callee(req, res, next) {
           };
 
           if (postData.replyTo) {
-            console.log('yes');
             results.replyTo = postData.replyTo;
           }
 
@@ -80,7 +79,6 @@ router.get('/', function _callee2(req, res, next) {
         case 0:
           //we configured the router to handle requests at root "/" 
           searchObj = req.query;
-          console.log(searchObj);
 
           if (searchObj.isReply) {
             isReply = searchObj.isReply == "true";
@@ -95,20 +93,20 @@ router.get('/', function _callee2(req, res, next) {
 
             if (onlyFollowingPosts) {
               searchObj.postedBy = req.session.user.following;
+              searchObj.postedBy.push(req.session.user._id);
             }
 
             delete searchObj.followingOnly;
           }
 
-          console.log(searchObj);
-          _context2.next = 7;
+          _context2.next = 5;
           return regeneratorRuntime.awrap(getPosts(searchObj));
 
-        case 7:
+        case 5:
           results = _context2.sent;
           res.status(200).send(results);
 
-        case 9:
+        case 7:
         case "end":
           return _context2.stop();
       }
@@ -122,48 +120,46 @@ router.post('/', function _callee3(req, res, next) {
       switch (_context3.prev = _context3.next) {
         case 0:
           //we configured the router to handle requests at root "/" 
-          console.log(req.body.content);
           postData = {
             content: req.body.content,
             postedBy: req.session.user,
             replyTo: req.body.replyTo
           };
-          console.log(postData);
-          _context3.prev = 3;
-          _context3.next = 6;
+          _context3.prev = 1;
+          _context3.next = 4;
           return regeneratorRuntime.awrap(Post.create(postData));
 
-        case 6:
+        case 4:
           newPost = _context3.sent;
-          _context3.next = 9;
+          _context3.next = 7;
           return regeneratorRuntime.awrap(User.populate(newPost, {
             path: "postedBy"
           }));
 
-        case 9:
+        case 7:
           populatedNewPost = _context3.sent;
-          _context3.next = 12;
+          _context3.next = 10;
           return regeneratorRuntime.awrap(Post.populate(newPost, {
             path: "replyTo"
           }));
 
-        case 12:
+        case 10:
           res.status(201).send(populatedNewPost);
-          _context3.next = 19;
+          _context3.next = 17;
           break;
 
-        case 15:
-          _context3.prev = 15;
-          _context3.t0 = _context3["catch"](3);
+        case 13:
+          _context3.prev = 13;
+          _context3.t0 = _context3["catch"](1);
           console.log("asynchronous server response: ".concat(_context3.t0));
           return _context3.abrupt("return", res.sendStatus(400));
 
-        case 19:
+        case 17:
         case "end":
           return _context3.stop();
       }
     }
-  }, null, null, [[3, 15]]);
+  }, null, null, [[1, 13]]);
 });
 router.put('/:id/like', function _callee4(req, res, next) {
   var postId, userId, isLiked, option, post;
@@ -297,23 +293,22 @@ router["delete"]('/:id', function _callee6(req, res, next) {
 
         case 4:
           post = _context6.sent;
-          console.log(post);
           res.sendStatus(202);
-          _context6.next = 13;
+          _context6.next = 12;
           break;
 
-        case 9:
-          _context6.prev = 9;
+        case 8:
+          _context6.prev = 8;
           _context6.t0 = _context6["catch"](0);
           console.log(_context6.t0);
           res.status(400);
 
-        case 13:
+        case 12:
         case "end":
           return _context6.stop();
       }
     }
-  }, null, null, [[0, 9]]);
+  }, null, null, [[0, 8]]);
 });
 
 function getPosts(searchObject) {

@@ -56,7 +56,6 @@ async function getPayload(username,userLoggedIn) {
             user = await User.findById(username)
 
             if (!user){
-                console.log('wtf')
                 return {
                     pageTitle: "User Not Found",
                     userLoggedIn: userLoggedIn,
@@ -64,7 +63,6 @@ async function getPayload(username,userLoggedIn) {
                 }    
             }
         }
-        console.log(user)
         return {
             pageTitle: user.username,
             userLoggedIn: userLoggedIn,

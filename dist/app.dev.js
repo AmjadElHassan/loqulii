@@ -20,7 +20,8 @@ var session = require('express-session');
 require('dotenv').config();
 
 app.set("view engine", "pug");
-app.set("views", "views");
+app.set("views", "views"); //passive tools
+
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({
   extended: false
@@ -43,19 +44,21 @@ var postPageRoute = require("./routes/postPageRoutes");
 
 var profileRoute = require("./routes/profileRoutes");
 
+var uploadRoute = require("./routes/uploadRoutes");
+
 app.use("/login", loginRoute);
 app.use("/register", registerRoute);
 app.use("/post", postPageRoute);
 app.use("/logout", logoutRoute);
-app.use("/profile", profileRoute); //api routes
+app.use("/profile", profileRoute);
+app.use("/uploads", uploadRoute); //api routes
 
 var postRoute = require("./routes/api/postRoutes");
 
 var usersRoute = require("./routes/api/usersRoutes");
 
 app.use("/api/posts", postRoute);
-app.use("/api/users", usersRoute); // app.use("/api/users", usersAPIRoute)
-
+app.use("/api/users", usersRoute);
 app.get('/', middleware.requireLogin, function (req, res, next) {
   var payLoad = {
     pageTitle: "Home",

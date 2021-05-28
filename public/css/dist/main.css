@@ -1,13 +1,17 @@
 * {
   --blue: rgb(49, 116, 240);
   --blueLight: #9bd1f9;
-  --blueBackground: rgba(212,237,255,0.6);
+  --blueBackground: rgba(212, 237, 255, 0.6);
   --buttonHoverbg: #d4edff;
-  --grayLight: rgb(230,236,240);
+  --grayLight: rgb(230, 236, 240);
   --spacing: 1rem;
-  --grayText: rgb(101,119,134);
-  --grayButtonText: rgba(0,0,0,0.34);
-  --red: rgb(226,34,94);
+  --grayText: rgb(101, 119, 134);
+  --grayButtonText: rgba(0, 0, 0, 0.34);
+  --red: rgb(226, 34, 94);
+}
+
+.row {
+  margin: 0;
 }
 
 body h1 {
@@ -117,28 +121,71 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
 .profileHeaderContainer {
   margin-bottom: 0.7rem;
 }
-.profileHeaderContainer .coverPhotoContainer {
-  height: 15rem;
+.profileHeaderContainer .coverPhotoSection {
+  height: 30vh;
   background-color: var(--blue);
 }
-.profileHeaderContainer .coverPhotoContainer .userImageContainer {
+.profileHeaderContainer .coverPhotoSection .coverPhotoContainer {
+  height: 100%;
+  width: 100%;
   position: relative;
 }
-.profileHeaderContainer .coverPhotoContainer .userImageContainer img {
+.profileHeaderContainer .coverPhotoSection .coverPhotoContainer img {
   width: 12.8rem;
   height: 12.8rem;
   border-radius: 100px;
   margin-left: var(--spacing);
-  position: absolute;
+  position: relative;
   top: 6.4rem;
   border: 4px solid #fff;
+}
+.profileHeaderContainer .coverPhotoSection .coverPhotoContainer .coverPhotoButton {
+  position: relative;
+  font-size: 3rem;
+  color: rgba(0, 0, 0, 0.6);
+  background-color: transparent;
+  border: none;
+  display: none;
+}
+.profileHeaderContainer .coverPhotoSection .coverPhotoContainer:hover .coverPhotoButton {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.profileHeaderContainer .coverPhotoSection .userImageContainer {
+  position: absolute;
+}
+.profileHeaderContainer .coverPhotoSection .userImageContainer img {
+  width: 12.8rem;
+  height: 12.8rem;
+  border-radius: 100px;
+  margin-left: var(--spacing);
+  position: relative;
+  border: 4px solid #fff;
+  bottom: 10rem;
+}
+.profileHeaderContainer .coverPhotoSection .userImageContainer .profilePictureButton {
+  position: relative;
+  margin-left: 10vw;
+  bottom: 42vh;
+  font-size: 3rem;
+  color: rgba(0, 0, 0, 0.6);
+  background-color: transparent;
+  border: none;
+  display: none;
+}
+.profileHeaderContainer .coverPhotoSection .userImageContainer:hover .profilePictureButton {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .profileHeaderContainer .profileButtonsContainer {
   text-align: right;
   padding: var(--spacing);
   min-height: 4rem;
 }
-.profileHeaderContainer .profileButtonsContainer .profileButton, .profileHeaderContainer .profileButtonsContainer .followButton {
+.profileHeaderContainer .profileButtonsContainer .profileButton,
+.profileHeaderContainer .profileButtonsContainer .followButton {
   background-color: transparent;
   border: 1px solid var(--blue);
   color: var(--blue);
@@ -148,7 +195,8 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   display: inline-block;
   margin-left: var(--spacing);
 }
-.profileHeaderContainer .profileButtonsContainer .profileButton:hover, .profileHeaderContainer .profileButtonsContainer .followButton:hover {
+.profileHeaderContainer .profileButtonsContainer .profileButton:hover,
+.profileHeaderContainer .profileButtonsContainer .followButton:hover {
   color: var(--blue);
   background-color: var(--blueBackground);
   text-decoration: none;
@@ -277,7 +325,8 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   border-radius: 20px;
   color: #2755b8;
 }
-.post button i, .post button span {
+.post button i,
+.post button span {
   pointer-events: none;
 }
 .post.postFocus {
@@ -328,7 +377,8 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
 .post .mainContentContainer .postContentContainer .header .displayName:hover {
   text-decoration: underline;
 }
-.post .mainContentContainer .postContentContainer .header .username, .post .mainContentContainer .postContentContainer .header .date {
+.post .mainContentContainer .postContentContainer .header .username,
+.post .mainContentContainer .postContentContainer .header .date {
   font-size: 0.92rem;
   color: var(--grayText);
 }
@@ -409,4 +459,10 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   font-weight: bold;
   margin-right: 0.5rem;
   color: var(--blue);
+}
+
+#imagePreview {
+  display: block;
+  max-width: 100%;
+  width: 100%;
 }

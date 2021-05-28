@@ -145,7 +145,7 @@ function getPayload(username, userLoggedIn) {
           user = _context5.sent;
 
           if (user) {
-            _context5.next = 11;
+            _context5.next = 10;
             break;
           }
 
@@ -156,19 +156,17 @@ function getPayload(username, userLoggedIn) {
           user = _context5.sent;
 
           if (user) {
-            _context5.next = 11;
+            _context5.next = 10;
             break;
           }
 
-          console.log('wtf');
           return _context5.abrupt("return", {
             pageTitle: "User Not Found",
             userLoggedIn: userLoggedIn,
             userLoggedInJs: JSON.stringify(userLoggedIn)
           });
 
-        case 11:
-          console.log(user);
+        case 10:
           return _context5.abrupt("return", {
             pageTitle: user.username,
             userLoggedIn: userLoggedIn,
@@ -176,17 +174,17 @@ function getPayload(username, userLoggedIn) {
             profileUser: user
           });
 
-        case 15:
-          _context5.prev = 15;
+        case 13:
+          _context5.prev = 13;
           _context5.t0 = _context5["catch"](0);
           console.log(_context5.t0);
 
-        case 18:
+        case 16:
         case "end":
           return _context5.stop();
       }
     }
-  }, null, null, [[0, 15]]);
+  }, null, null, [[0, 13]]);
 }
 
 module.exports = router;

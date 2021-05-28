@@ -1,3 +1,6 @@
+//globals
+let cropper
+
 $("#postTextarea, #replyTextarea").keyup((event) => {
     let textBox = $(event.target)
     let value = textBox.val().trim()
@@ -110,8 +113,88 @@ $("#deletePostModal").on("show.bs.modal", async (event) => {
     await $("#submitDelete").data("id", postId)
 })
 
-$("#submitDelete").click(async(event)=>{
-    try{
+$("#filePhoto").change(function () {
+    // let input = $(event.target)
+
+    if (this.files && this.files[0]) {
+        let reader = new FileReader()
+        reader.onload = (e) => {
+            let image = document.getElementById('imagePreview')
+            image.src = e.target.result
+
+            if (cropper !== undefined) {
+                cropper.destroy()
+            }
+
+            cropper = new Cropper(image, {
+                aspectRatio: 1 / 1,
+                background: false
+            })
+        }
+        reader.readAsDataURL(this.files[0])
+    }
+})
+
+$("#coverPhotoUploadButton").click((event) => {
+    let canvas = cropper.getCroppedCanvas();
+
+    if (canvas == null) {
+        alert("could not upload image");
+        return
+    }
+
+    canvas.toBlob(async (blob) => {
+        try {
+            let formData = new FormData();
+            formData.append("croppedImage", blob);
+            $.ajax({
+                url: "/api/users/coverPhoto",
+                type: "post",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: () => {
+                    location.reload()
+                }
+            })
+        }
+        catch (err) {
+            console.log(err)
+        }
+    })
+})
+
+$("#imageUploadButton").click((event) => {
+    let canvas = cropper.getCroppedCanvas();
+
+    if (canvas == null) {
+        alert("could not upload image");
+        return
+    }
+
+    canvas.toBlob(async (blob) => {
+        try {
+            let formData = new FormData();
+            formData.append("croppedImage", blob);
+            $.ajax({
+                url: "/api/users/profilePicture",
+                type: "post",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: () => {
+                    location.reload()
+                }
+            })
+        }
+        catch (err) {
+            console.log(err)
+        }
+    })
+})
+
+$("#submitDelete").click(async (event) => {
+    try {
         let postId = await $(event.target).data("id")
         console.log(postId)
         $.ajax({
@@ -120,13 +203,12 @@ $("#submitDelete").click(async(event)=>{
             success: (response) => {
                 location.reload()
             }
-        })    
+        })
     }
-    catch(err){
+    catch (err) {
         console.log(err)
     }
 })
-
 
 $(document).on("click", ".followButton", async (event) => {
     let button = $(event.target)
@@ -134,8 +216,8 @@ $(document).on("click", ".followButton", async (event) => {
     $.ajax({
         url: `/api/users/${userId}/follow`,
         type: "PUT",
-        success: (data,status,xhr) => {
-            if (xhr.status==404){
+        success: (data, status, xhr) => {
+            if (xhr.status == 404) {
                 return alert(data)
             }
 
@@ -151,9 +233,9 @@ $(document).on("click", ".followButton", async (event) => {
             }
 
             let followersLabel = $("#followersValue")
-            if (followersLabel.length != 0){
-              let followersText = followersLabel.text()
-              followersLabel.text(Number(followersText)+Number(difference))
+            if (followersLabel.length != 0) {
+                let followersText = followersLabel.text()
+                followersLabel.text(Number(followersText) + Number(difference))
             }
         }
     })
@@ -184,8 +266,8 @@ function getPostId(target) {
     return postId
 }
 
-function createPostHtml(postData, postFocus=false) {
-    let postFocusClass = postFocus? "postFocus":"" 
+function createPostHtml(postData, postFocus = false) {
+    let postFocusClass = postFocus ? "postFocus" : ""
     if (!postData) return alert("post object is null")
     let isReply = postData.replyTo ? true : false
     let isRetweet = (postData.retweetData ? true : false)
@@ -218,7 +300,7 @@ function createPostHtml(postData, postFocus=false) {
     }
     //reply indication
     let replyFlag = ""
-    if (isReply&&postData.replyTo._id) {
+    if (isReply && postData.replyTo._id) {
         if (!postData.replyTo._id) {
             return alert("replyTo is not poulated")
         }
@@ -227,8 +309,8 @@ function createPostHtml(postData, postFocus=false) {
     }
 
     //delete indication
-    let creatorButtons =""
-    if(postData.postedBy._id===userLoggedIn._id){
+    let creatorButtons = ""
+    if (postData.postedBy._id === userLoggedIn._id) {
         creatorButtons = `<div class="creatorButtons"><button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal" class="deleteButton">
         <i class="far fa-times-circle"></i>
         </button>
@@ -344,7 +426,7 @@ function outputPostsWithReplies(posts, container) {
         container.append(html)
     }
 
-    let mainPostHtml = createPostHtml(posts.postData,true)
+    let mainPostHtml = createPostHtml(posts.postData, true)
     container.append(mainPostHtml)
 
     posts.replies.forEach(post => {

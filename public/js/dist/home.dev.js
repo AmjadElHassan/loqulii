@@ -4,7 +4,7 @@
 // const { create } = require("../../schemas/PostSchema")
 $(document).ready(function () {
   $.get("/api/posts", {
-    followingOnly: false
+    followingOnly: true
   }, function _callee(response) {
     return regeneratorRuntime.async(function _callee$(_context) {
       while (1) {

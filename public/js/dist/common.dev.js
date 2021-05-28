@@ -1,5 +1,7 @@
 "use strict";
 
+//globals
+var cropper;
 $("#postTextarea, #replyTextarea").keyup(function (event) {
   var textBox = $(event.target);
   var value = textBox.val().trim();
@@ -161,18 +163,118 @@ $("#deletePostModal").on("show.bs.modal", function _callee4(event) {
     }
   });
 });
-$("#submitDelete").click(function _callee5(event) {
+$("#filePhoto").change(function () {
+  // let input = $(event.target)
+  if (this.files && this.files[0]) {
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      var image = document.getElementById('imagePreview');
+      image.src = e.target.result;
+
+      if (cropper !== undefined) {
+        cropper.destroy();
+      }
+
+      cropper = new Cropper(image, {
+        aspectRatio: 1 / 1,
+        background: false
+      });
+    };
+
+    reader.readAsDataURL(this.files[0]);
+  }
+});
+$("#coverPhotoUploadButton").click(function (event) {
+  var canvas = cropper.getCroppedCanvas();
+
+  if (canvas == null) {
+    alert("could not upload image");
+    return;
+  }
+
+  canvas.toBlob(function _callee5(blob) {
+    var formData;
+    return regeneratorRuntime.async(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            try {
+              formData = new FormData();
+              formData.append("croppedImage", blob);
+              $.ajax({
+                url: "/api/users/coverPhoto",
+                type: "post",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function success() {
+                  location.reload();
+                }
+              });
+            } catch (err) {
+              console.log(err);
+            }
+
+          case 1:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    });
+  });
+});
+$("#imageUploadButton").click(function (event) {
+  var canvas = cropper.getCroppedCanvas();
+
+  if (canvas == null) {
+    alert("could not upload image");
+    return;
+  }
+
+  canvas.toBlob(function _callee6(blob) {
+    var formData;
+    return regeneratorRuntime.async(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            try {
+              formData = new FormData();
+              formData.append("croppedImage", blob);
+              $.ajax({
+                url: "/api/users/profilePicture",
+                type: "post",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function success() {
+                  location.reload();
+                }
+              });
+            } catch (err) {
+              console.log(err);
+            }
+
+          case 1:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    });
+  });
+});
+$("#submitDelete").click(function _callee7(event) {
   var postId;
-  return regeneratorRuntime.async(function _callee5$(_context5) {
+  return regeneratorRuntime.async(function _callee7$(_context7) {
     while (1) {
-      switch (_context5.prev = _context5.next) {
+      switch (_context7.prev = _context7.next) {
         case 0:
-          _context5.prev = 0;
-          _context5.next = 3;
+          _context7.prev = 0;
+          _context7.next = 3;
           return regeneratorRuntime.awrap($(event.target).data("id"));
 
         case 3:
-          postId = _context5.sent;
+          postId = _context7.sent;
           console.log(postId);
           $.ajax({
             url: "/api/posts/".concat(postId),
@@ -181,33 +283,33 @@ $("#submitDelete").click(function _callee5(event) {
               location.reload();
             }
           });
-          _context5.next = 11;
+          _context7.next = 11;
           break;
 
         case 8:
-          _context5.prev = 8;
-          _context5.t0 = _context5["catch"](0);
-          console.log(_context5.t0);
+          _context7.prev = 8;
+          _context7.t0 = _context7["catch"](0);
+          console.log(_context7.t0);
 
         case 11:
         case "end":
-          return _context5.stop();
+          return _context7.stop();
       }
     }
   }, null, null, [[0, 8]]);
 });
-$(document).on("click", ".followButton", function _callee6(event) {
+$(document).on("click", ".followButton", function _callee8(event) {
   var button, userId;
-  return regeneratorRuntime.async(function _callee6$(_context6) {
+  return regeneratorRuntime.async(function _callee8$(_context8) {
     while (1) {
-      switch (_context6.prev = _context6.next) {
+      switch (_context8.prev = _context8.next) {
         case 0:
           button = $(event.target);
-          _context6.next = 3;
+          _context8.next = 3;
           return regeneratorRuntime.awrap(button.data().user);
 
         case 3:
-          userId = _context6.sent;
+          userId = _context8.sent;
           $.ajax({
             url: "/api/users/".concat(userId, "/follow"),
             type: "PUT",
@@ -241,7 +343,7 @@ $(document).on("click", ".followButton", function _callee6(event) {
 
         case 5:
         case "end":
-          return _context6.stop();
+          return _context8.stop();
       }
     }
   });

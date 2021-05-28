@@ -23,7 +23,6 @@ router.get('/:id',async (req,res,next)=>{
         }
         
         if (postData.replyTo){
-            console.log('yes')
             results.replyTo = postData.replyTo
         }
 
@@ -39,7 +38,6 @@ router.get('/:id',async (req,res,next)=>{
 
 router.get('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
     let searchObj = req.query;
-    console.log(searchObj)
 
     if (searchObj.isReply){
         let isReply = (searchObj.isReply=="true")
@@ -51,22 +49,20 @@ router.get('/', async (req, res, next) => {//we configured the router to handle 
         let onlyFollowingPosts = (searchObj.followingOnly == 'true')
         if (onlyFollowingPosts){
             searchObj.postedBy = req.session.user.following
+            searchObj.postedBy.push(req.session.user._id)
         }
         delete searchObj.followingOnly
     }
-    console.log(searchObj)
     let results = await getPosts(searchObj)    
     res.status(200).send(results)
 })
 
 router.post('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
-    console.log(req.body.content)
     let postData = {
         content: req.body.content,
         postedBy: req.session.user,
         replyTo: req.body.replyTo
     }
-    console.log(postData)
 
     try {
         let newPost = await Post.create(postData)
@@ -140,7 +136,6 @@ router.delete('/:id', async(req,res,next)=>{
     try{
         let postId = {_id: req.params.id}
         let post = await Post.findOneAndDelete(postId)
-        console.log(post)
         res.sendStatus(202)
     }
     catch(err){
