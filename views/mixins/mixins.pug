@@ -60,6 +60,34 @@ mixin createCoverPhotoUploadModal()
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Cancel
                     button#coverPhotoUploadButton.btn.btn-primary(type='button') Save
 
+mixin createpinPostModal()
+    #pinPostModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='pinPostModalLabel' aria-hidden='true' style="padding:0 0 0 0")
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#pinPostModalLabel.modal-title Pin your post
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                .modal-body
+                    p Would you like to pin this post?
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                    button#submitPinPost.btn.btn-primary(type='button') pin it!
+
+mixin createUnpinPostModal()
+    #unpinPostModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='unpinPostModalLabel' aria-hidden='true' style="padding:0 0 0 0")
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#unpinPostModalLabel.modal-title unPin your post
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                .modal-body
+                    p Would you like to unPin this post?
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                    button#submitUnpinPost.btn.btn-primary(type='button') remove
+
 
 mixin createDeletePostModal()
     #deletePostModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='deletePostModalLabel' aria-hidden='true' style="padding:0 0 0 0")
@@ -78,6 +106,8 @@ mixin createDeletePostModal()
 mixin createPostModals(userLoggedIn)
     +createReplyModal(userLoggedIn)
     +createDeletePostModal()
+    +createpinPostModal()
+    +createUnpinPostModal()
 
 mixin createFollowButton(user,isFollowing)
     - text = isFollowing? "following":"follow";

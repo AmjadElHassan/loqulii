@@ -113,6 +113,70 @@ $("#deletePostModal").on("show.bs.modal", async (event) => {
     await $("#submitDelete").data("id", postId)
 })
 
+$("#pinPostModal").on("show.bs.modal", async (event) => {
+    let button = $(event.relatedTarget)
+    let postId = getPostId(button)
+    await $("#submitPinPost").data("id", postId)
+})
+
+$("#unpinPostModal").on("show.bs.modal", async (event) => {
+    let button = $(event.relatedTarget)
+    let postId = getPostId(button)
+    await $("#submitUnpinPost").data("id", postId)
+})
+
+
+$("#submitDelete").click(async (event) => {
+    try {
+        let postId = await $(event.target).data("id")
+        $.ajax({
+            url: `/api/posts/${postId}`,
+            type: "DELETE",
+            success: (response) => {
+                location.reload()
+            }
+        })
+    }
+    catch (err) {
+        console.log(err)
+    }
+})
+
+$("#submitPinPost").click(async (event) => {
+    try {
+        let postId = await $(event.target).data("id")
+        $.ajax({
+            url: `/api/posts/${postId}`,
+            type: "PUT",
+            data: { pinned: true },
+            success: (response) => {
+                location.reload()
+            }
+        })
+    }
+    catch (err) {
+        console.log(err)
+    }
+})
+
+$("#submitUnpinPost").click(async (event) => {
+    try {
+        let postId = await $(event.target).data("id")
+        $.ajax({
+            url: `/api/posts/${postId}`,
+            type: "PUT",
+            data: { pinned: false },
+            success: (response) => {
+                location.reload()
+            }
+        })
+    }
+    catch (err) {
+        console.log(err)
+    }
+})
+
+
 $("#filePhoto").change(function () {
     // let input = $(event.target)
 
@@ -211,22 +275,6 @@ $("#imageUploadButton").click((event) => {
     })
 })
 
-$("#submitDelete").click(async (event) => {
-    try {
-        let postId = await $(event.target).data("id")
-        console.log(postId)
-        $.ajax({
-            url: `/api/posts/${postId}`,
-            type: "DELETE",
-            success: (response) => {
-                location.reload()
-            }
-        })
-    }
-    catch (err) {
-        console.log(err)
-    }
-})
 
 $(document).on("click", ".followButton", async (event) => {
     let button = $(event.target)
@@ -306,7 +354,7 @@ function createPostHtml(postData, postFocus = false) {
     let user = postData.postedBy
     let userRealName = user.firstName + ` ${user.lastName}`
     let timestamp = timeDifference(new Date(), new Date(postData.createdAt))
-    //retweet indication
+    //retweet header
     let retweetText = "";
     if (isRetweet) {
         retweetText = `<span>
@@ -316,6 +364,16 @@ function createPostHtml(postData, postFocus = false) {
         </a>
         </span>`
     }
+    //pinned header
+    let pinnedFlag = ""
+    if (postData.pinned==true){
+        pinnedFlag = 
+        `<span>
+        <i class="fas fa-thumbtack"></i>
+        Pinned Post
+        </span>`
+    }
+
     //reply indication
     let replyFlag = ""
     if (isReply && postData.replyTo._id) {
@@ -326,10 +384,23 @@ function createPostHtml(postData, postFocus = false) {
         replyFlag = `<div class="replyFlag">Replying To <a href="/profile/${userReplyingTo}">@${userReplyingTo}</a></div>`
     }
 
-    //delete indication
+    //delete/pin buttons
     let creatorButtons = ""
+    let dataTarget = "#pinPostModal"
     if (postData.postedBy._id === userLoggedIn._id) {
-        creatorButtons = `<div class="creatorButtons"><button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal" class="deleteButton">
+
+        let pinnedIndicator = ""
+        if (postData.pinned == true){
+            pinnedIndicator = "pinned"
+            dataTarget = "#unpinPostModal"
+        }
+
+        creatorButtons = `
+        <div class="creatorButtons">
+        <button data-id="${postData._id}" data-toggle="modal" data-target="${dataTarget}" class="pinButton ${pinnedIndicator}">
+        <i class="fas fa-thumbtack"></i>
+        </button>
+        <button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal" class="deleteButton">
         <i class="far fa-times-circle"></i>
         </button>
         </div>`
@@ -337,6 +408,7 @@ function createPostHtml(postData, postFocus = false) {
 
     return `<div class="post ${postFocusClass}" data-id="${postData._id}">
                 <div class="postActionContainer">
+                    ${pinnedFlag}
                     ${retweetText}
                 </div>
                 <div class="mainContentContainer">

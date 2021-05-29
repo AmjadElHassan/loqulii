@@ -203,17 +203,67 @@ router.put('/:id/like', function _callee4(req, res, next) {
     }
   });
 });
-router.post('/:id/retweets', function _callee5(req, res, next) {
-  var postId, userId, deletedPost, option, repost, post;
+router.put('/:id', function _callee5(req, res, next) {
+  var newPin;
   return regeneratorRuntime.async(function _callee5$(_context5) {
     while (1) {
       switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.prev = 0;
+
+          if (!(req.body.pinned !== undefined)) {
+            _context5.next = 4;
+            break;
+          }
+
+          _context5.next = 4;
+          return regeneratorRuntime.awrap(Post.updateMany({
+            postedBy: req.session.user._id
+          }, {
+            pinned: false
+          }));
+
+        case 4:
+          _context5.next = 6;
+          return regeneratorRuntime.awrap(console.log(req.body.pinned, req.params.id));
+
+        case 6:
+          _context5.next = 8;
+          return regeneratorRuntime.awrap(Post.findByIdAndUpdate(req.params.id, req.body, {
+            "new": true
+          }));
+
+        case 8:
+          newPin = _context5.sent;
+          console.log(newPin);
+          res.sendStatus(200);
+          _context5.next = 17;
+          break;
+
+        case 13:
+          _context5.prev = 13;
+          _context5.t0 = _context5["catch"](0);
+          console.log(_context5.t0);
+          res.status(400).send('failed to pin');
+
+        case 17:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  }, null, null, [[0, 13]]);
+});
+router.post('/:id/retweets', function _callee6(req, res, next) {
+  var postId, userId, deletedPost, option, repost, post;
+  return regeneratorRuntime.async(function _callee6$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
         case 0:
           postId = req.params.id; //we receive the post information for the post being liked
 
           userId = req.session.user._id; //try and delete retweet
 
-          _context5.next = 4;
+          _context6.next = 4;
           return regeneratorRuntime.awrap(Post.findOneAndDelete({
             postedBy: userId,
             retweetData: postId
@@ -223,16 +273,16 @@ router.post('/:id/retweets', function _callee5(req, res, next) {
           }));
 
         case 4:
-          deletedPost = _context5.sent;
+          deletedPost = _context6.sent;
           option = deletedPost != null ? "$pull" : "$addToSet";
           repost = deletedPost;
 
           if (!(repost == null)) {
-            _context5.next = 11;
+            _context6.next = 11;
             break;
           }
 
-          _context5.next = 10;
+          _context6.next = 10;
           return regeneratorRuntime.awrap(Post.create({
             postedBy: userId,
             retweetData: postId
@@ -242,10 +292,10 @@ router.post('/:id/retweets', function _callee5(req, res, next) {
           }));
 
         case 10:
-          repost = _context5.sent;
+          repost = _context6.sent;
 
         case 11:
-          _context5.next = 13;
+          _context6.next = 13;
           return regeneratorRuntime.awrap(User.findByIdAndUpdate(userId, _defineProperty({}, option, {
             retweets: repost._id
           }), {
@@ -256,8 +306,8 @@ router.post('/:id/retweets', function _callee5(req, res, next) {
           }));
 
         case 13:
-          req.session.user = _context5.sent;
-          _context5.next = 16;
+          req.session.user = _context6.sent;
+          _context6.next = 16;
           return regeneratorRuntime.awrap(Post.findByIdAndUpdate(postId, _defineProperty({}, option, {
             retweetUsers: userId
           }), {
@@ -268,44 +318,44 @@ router.post('/:id/retweets', function _callee5(req, res, next) {
           }));
 
         case 16:
-          post = _context5.sent;
+          post = _context6.sent;
           res.status(200).send(post);
 
         case 18:
         case "end":
-          return _context5.stop();
+          return _context6.stop();
       }
     }
   });
 });
-router["delete"]('/:id', function _callee6(req, res, next) {
+router["delete"]('/:id', function _callee7(req, res, next) {
   var postId, post;
-  return regeneratorRuntime.async(function _callee6$(_context6) {
+  return regeneratorRuntime.async(function _callee7$(_context7) {
     while (1) {
-      switch (_context6.prev = _context6.next) {
+      switch (_context7.prev = _context7.next) {
         case 0:
-          _context6.prev = 0;
+          _context7.prev = 0;
           postId = {
             _id: req.params.id
           };
-          _context6.next = 4;
+          _context7.next = 4;
           return regeneratorRuntime.awrap(Post.findOneAndDelete(postId));
 
         case 4:
-          post = _context6.sent;
+          post = _context7.sent;
           res.sendStatus(202);
-          _context6.next = 12;
+          _context7.next = 12;
           break;
 
         case 8:
-          _context6.prev = 8;
-          _context6.t0 = _context6["catch"](0);
-          console.log(_context6.t0);
+          _context7.prev = 8;
+          _context7.t0 = _context7["catch"](0);
+          console.log(_context7.t0);
           res.status(400);
 
         case 12:
         case "end":
-          return _context6.stop();
+          return _context7.stop();
       }
     }
   }, null, null, [[0, 8]]);
@@ -313,42 +363,42 @@ router["delete"]('/:id', function _callee6(req, res, next) {
 
 function getPosts(searchObject) {
   var IdCheck, results;
-  return regeneratorRuntime.async(function getPosts$(_context7) {
+  return regeneratorRuntime.async(function getPosts$(_context8) {
     while (1) {
-      switch (_context7.prev = _context7.next) {
+      switch (_context8.prev = _context8.next) {
         case 0:
-          _context7.prev = 0;
+          _context8.prev = 0;
           IdCheck = searchObject !== undefined ? searchObject : null;
-          _context7.next = 4;
+          _context8.next = 4;
           return regeneratorRuntime.awrap(Post.find(searchObject).populate("postedBy").populate("retweetData").populate("replyTo").sort({
             "createdAt": -1
           }));
 
         case 4:
-          results = _context7.sent;
-          _context7.next = 7;
+          results = _context8.sent;
+          _context8.next = 7;
           return regeneratorRuntime.awrap(User.populate(results, {
             path: "replyTo.postedBy"
           }));
 
         case 7:
-          results = _context7.sent;
-          _context7.next = 10;
+          results = _context8.sent;
+          _context8.next = 10;
           return regeneratorRuntime.awrap(User.populate(results, {
             path: "retweetData.postedBy"
           }));
 
         case 10:
-          return _context7.abrupt("return", _context7.sent);
+          return _context8.abrupt("return", _context8.sent);
 
         case 13:
-          _context7.prev = 13;
-          _context7.t0 = _context7["catch"](0);
-          console.log(_context7.t0);
+          _context8.prev = 13;
+          _context8.t0 = _context8["catch"](0);
+          console.log(_context8.t0);
 
         case 16:
         case "end":
-          return _context7.stop();
+          return _context8.stop();
       }
     }
   }, null, null, [[0, 13]]);

@@ -263,6 +263,10 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   text-align: center;
 }
 
+.pinnedContainer {
+  border-bottom: 2rem solid rgba(173, 216, 230, 0.288);
+}
+
 .resultsContainer {
   display: flex;
   flex-direction: column;
@@ -316,6 +320,15 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   background-color: transparent;
   border: none;
   color: var(--grayButtonText);
+}
+.post button * {
+  text-align: center;
+}
+.post button.pinButton.pinned {
+  color: #008dce;
+  background-color: rgba(213, 252, 216, 0.24);
+  border: solid 0.5px green;
+  border-radius: 20px;
 }
 .post button:hover {
   background-color: #d4edff;

@@ -163,6 +163,150 @@ $("#deletePostModal").on("show.bs.modal", function _callee4(event) {
     }
   });
 });
+$("#pinPostModal").on("show.bs.modal", function _callee5(event) {
+  var button, postId;
+  return regeneratorRuntime.async(function _callee5$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          button = $(event.relatedTarget);
+          postId = getPostId(button);
+          _context5.next = 4;
+          return regeneratorRuntime.awrap($("#submitPinPost").data("id", postId));
+
+        case 4:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  });
+});
+$("#unpinPostModal").on("show.bs.modal", function _callee6(event) {
+  var button, postId;
+  return regeneratorRuntime.async(function _callee6$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          button = $(event.relatedTarget);
+          postId = getPostId(button);
+          _context6.next = 4;
+          return regeneratorRuntime.awrap($("#submitUnpinPost").data("id", postId));
+
+        case 4:
+        case "end":
+          return _context6.stop();
+      }
+    }
+  });
+});
+$("#submitDelete").click(function _callee7(event) {
+  var postId;
+  return regeneratorRuntime.async(function _callee7$(_context7) {
+    while (1) {
+      switch (_context7.prev = _context7.next) {
+        case 0:
+          _context7.prev = 0;
+          _context7.next = 3;
+          return regeneratorRuntime.awrap($(event.target).data("id"));
+
+        case 3:
+          postId = _context7.sent;
+          $.ajax({
+            url: "/api/posts/".concat(postId),
+            type: "DELETE",
+            success: function success(response) {
+              location.reload();
+            }
+          });
+          _context7.next = 10;
+          break;
+
+        case 7:
+          _context7.prev = 7;
+          _context7.t0 = _context7["catch"](0);
+          console.log(_context7.t0);
+
+        case 10:
+        case "end":
+          return _context7.stop();
+      }
+    }
+  }, null, null, [[0, 7]]);
+});
+$("#submitPinPost").click(function _callee8(event) {
+  var postId;
+  return regeneratorRuntime.async(function _callee8$(_context8) {
+    while (1) {
+      switch (_context8.prev = _context8.next) {
+        case 0:
+          _context8.prev = 0;
+          _context8.next = 3;
+          return regeneratorRuntime.awrap($(event.target).data("id"));
+
+        case 3:
+          postId = _context8.sent;
+          $.ajax({
+            url: "/api/posts/".concat(postId),
+            type: "PUT",
+            data: {
+              pinned: true
+            },
+            success: function success(response) {
+              location.reload();
+            }
+          });
+          _context8.next = 10;
+          break;
+
+        case 7:
+          _context8.prev = 7;
+          _context8.t0 = _context8["catch"](0);
+          console.log(_context8.t0);
+
+        case 10:
+        case "end":
+          return _context8.stop();
+      }
+    }
+  }, null, null, [[0, 7]]);
+});
+$("#submitUnpinPost").click(function _callee9(event) {
+  var postId;
+  return regeneratorRuntime.async(function _callee9$(_context9) {
+    while (1) {
+      switch (_context9.prev = _context9.next) {
+        case 0:
+          _context9.prev = 0;
+          _context9.next = 3;
+          return regeneratorRuntime.awrap($(event.target).data("id"));
+
+        case 3:
+          postId = _context9.sent;
+          $.ajax({
+            url: "/api/posts/".concat(postId),
+            type: "PUT",
+            data: {
+              pinned: false
+            },
+            success: function success(response) {
+              location.reload();
+            }
+          });
+          _context9.next = 10;
+          break;
+
+        case 7:
+          _context9.prev = 7;
+          _context9.t0 = _context9["catch"](0);
+          console.log(_context9.t0);
+
+        case 10:
+        case "end":
+          return _context9.stop();
+      }
+    }
+  }, null, null, [[0, 7]]);
+});
 $("#filePhoto").change(function () {
   // let input = $(event.target)
   if (this.files && this.files[0]) {
@@ -214,11 +358,11 @@ $("#coverPhotoUploadButton").click(function (event) {
     return;
   }
 
-  canvas.toBlob(function _callee5(blob) {
+  canvas.toBlob(function _callee10(blob) {
     var formData;
-    return regeneratorRuntime.async(function _callee5$(_context5) {
+    return regeneratorRuntime.async(function _callee10$(_context10) {
       while (1) {
-        switch (_context5.prev = _context5.next) {
+        switch (_context10.prev = _context10.next) {
           case 0:
             try {
               formData = new FormData();
@@ -239,7 +383,7 @@ $("#coverPhotoUploadButton").click(function (event) {
 
           case 1:
           case "end":
-            return _context5.stop();
+            return _context10.stop();
         }
       }
     });
@@ -253,11 +397,11 @@ $("#imageUploadButton").click(function (event) {
     return;
   }
 
-  canvas.toBlob(function _callee6(blob) {
+  canvas.toBlob(function _callee11(blob) {
     var formData;
-    return regeneratorRuntime.async(function _callee6$(_context6) {
+    return regeneratorRuntime.async(function _callee11$(_context11) {
       while (1) {
-        switch (_context6.prev = _context6.next) {
+        switch (_context11.prev = _context11.next) {
           case 0:
             try {
               formData = new FormData();
@@ -278,59 +422,24 @@ $("#imageUploadButton").click(function (event) {
 
           case 1:
           case "end":
-            return _context6.stop();
+            return _context11.stop();
         }
       }
     });
   });
 });
-$("#submitDelete").click(function _callee7(event) {
-  var postId;
-  return regeneratorRuntime.async(function _callee7$(_context7) {
-    while (1) {
-      switch (_context7.prev = _context7.next) {
-        case 0:
-          _context7.prev = 0;
-          _context7.next = 3;
-          return regeneratorRuntime.awrap($(event.target).data("id"));
-
-        case 3:
-          postId = _context7.sent;
-          console.log(postId);
-          $.ajax({
-            url: "/api/posts/".concat(postId),
-            type: "DELETE",
-            success: function success(response) {
-              location.reload();
-            }
-          });
-          _context7.next = 11;
-          break;
-
-        case 8:
-          _context7.prev = 8;
-          _context7.t0 = _context7["catch"](0);
-          console.log(_context7.t0);
-
-        case 11:
-        case "end":
-          return _context7.stop();
-      }
-    }
-  }, null, null, [[0, 8]]);
-});
-$(document).on("click", ".followButton", function _callee8(event) {
+$(document).on("click", ".followButton", function _callee12(event) {
   var button, userId;
-  return regeneratorRuntime.async(function _callee8$(_context8) {
+  return regeneratorRuntime.async(function _callee12$(_context12) {
     while (1) {
-      switch (_context8.prev = _context8.next) {
+      switch (_context12.prev = _context12.next) {
         case 0:
           button = $(event.target);
-          _context8.next = 3;
+          _context12.next = 3;
           return regeneratorRuntime.awrap(button.data().user);
 
         case 3:
-          userId = _context8.sent;
+          userId = _context12.sent;
           $.ajax({
             url: "/api/users/".concat(userId, "/follow"),
             type: "PUT",
@@ -364,7 +473,7 @@ $(document).on("click", ".followButton", function _callee8(event) {
 
         case 5:
         case "end":
-          return _context8.stop();
+          return _context12.stop();
       }
     }
   });
@@ -410,12 +519,19 @@ function createPostHtml(postData) {
   var postContent = postData.content;
   var user = postData.postedBy;
   var userRealName = user.firstName + " ".concat(user.lastName);
-  var timestamp = timeDifference(new Date(), new Date(postData.createdAt)); //retweet indication
+  var timestamp = timeDifference(new Date(), new Date(postData.createdAt)); //retweet header
 
   var retweetText = "";
 
   if (isRetweet) {
     retweetText = "<span>\n        <i class=\"fas fa-retweet\"></i>\n        Retweeted by <a href=\"/profile/".concat(retweetedBy, "\">\n        ").concat(retweetedBy, "\n        </a>\n        </span>");
+  } //pinned header
+
+
+  var pinnedFlag = "";
+
+  if (postData.pinned == true) {
+    pinnedFlag = "<span>\n        <i class=\"fas fa-thumbtack\"></i>\n        Pinned Post\n        </span>";
   } //reply indication
 
 
@@ -428,16 +544,24 @@ function createPostHtml(postData) {
 
     var userReplyingTo = postData.replyTo.postedBy.username;
     replyFlag = "<div class=\"replyFlag\">Replying To <a href=\"/profile/".concat(userReplyingTo, "\">@").concat(userReplyingTo, "</a></div>");
-  } //delete indication
+  } //delete/pin buttons
 
 
   var creatorButtons = "";
+  var dataTarget = "#pinPostModal";
 
   if (postData.postedBy._id === userLoggedIn._id) {
-    creatorButtons = "<div class=\"creatorButtons\"><button data-id=\"".concat(postData._id, "\" data-toggle=\"modal\" data-target=\"#deletePostModal\" class=\"deleteButton\">\n        <i class=\"far fa-times-circle\"></i>\n        </button>\n        </div>");
+    var pinnedIndicator = "";
+
+    if (postData.pinned == true) {
+      pinnedIndicator = "pinned";
+      dataTarget = "#unpinPostModal";
+    }
+
+    creatorButtons = "\n        <div class=\"creatorButtons\">\n        <button data-id=\"".concat(postData._id, "\" data-toggle=\"modal\" data-target=\"").concat(dataTarget, "\" class=\"pinButton ").concat(pinnedIndicator, "\">\n        <i class=\"fas fa-thumbtack\"></i>\n        </button>\n        <button data-id=\"").concat(postData._id, "\" data-toggle=\"modal\" data-target=\"#deletePostModal\" class=\"deleteButton\">\n        <i class=\"far fa-times-circle\"></i>\n        </button>\n        </div>");
   }
 
-  return "<div class=\"post ".concat(postFocusClass, "\" data-id=\"").concat(postData._id, "\">\n                <div class=\"postActionContainer\">\n                    ").concat(retweetText, "\n                </div>\n                <div class=\"mainContentContainer\">\n                    <div class=\"userImageContainer\">\n                        <img src=\"").concat(user.profilePic, "\">\n                    </div>\n                    <div class=\"postContentContainer\">\n                        <div class=\"header\">\n                            <a class=\"displayName\" href=\"/profile/").concat(user.username, "\">\n                                ").concat(userRealName, "\n                            </a>\n                            <span class=\"username\">@").concat(user.username, "</span>\n                            <span class=\"date\">").concat(timestamp, "</span>\n                            ").concat(creatorButtons, "\n                        </div>\n                        ").concat(replyFlag, "\n                        <div class=\"postBody\">\n                            <span>").concat(postContent || postData.retweetData, "</span>\n                        </div>\n                        <div class=\"postFooter\">\n                            <div class=\"postButtonContainer\">\n                                <button class=\"replyButton\" data-toggle=\"modal\" data-target=\"#replyModal\">\n                                    <i class=\"far fa-comment-alt\"></i>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer green\">\n                                <button class=\"retweetButton ").concat(retweetButtonActiveClass, "\">\n                                    <i class=\"fas fa-retweet\"></i>\n                                    <span>").concat(postData.retweetUsers.length || "", "</span>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer red\">\n                                <button class=\"likeButton ").concat(likeButtonActiveClass, "\">\n                                    <i class=\"far fa-heart\"></i>\n                                    <span>").concat(postData.likes.length || "", "</span>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n                    \n                </div>\n    </div>");
+  return "<div class=\"post ".concat(postFocusClass, "\" data-id=\"").concat(postData._id, "\">\n                <div class=\"postActionContainer\">\n                    ").concat(pinnedFlag, "\n                    ").concat(retweetText, "\n                </div>\n                <div class=\"mainContentContainer\">\n                    <div class=\"userImageContainer\">\n                        <img src=\"").concat(user.profilePic, "\">\n                    </div>\n                    <div class=\"postContentContainer\">\n                        <div class=\"header\">\n                            <a class=\"displayName\" href=\"/profile/").concat(user.username, "\">\n                                ").concat(userRealName, "\n                            </a>\n                            <span class=\"username\">@").concat(user.username, "</span>\n                            <span class=\"date\">").concat(timestamp, "</span>\n                            ").concat(creatorButtons, "\n                        </div>\n                        ").concat(replyFlag, "\n                        <div class=\"postBody\">\n                            <span>").concat(postContent || postData.retweetData, "</span>\n                        </div>\n                        <div class=\"postFooter\">\n                            <div class=\"postButtonContainer\">\n                                <button class=\"replyButton\" data-toggle=\"modal\" data-target=\"#replyModal\">\n                                    <i class=\"far fa-comment-alt\"></i>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer green\">\n                                <button class=\"retweetButton ").concat(retweetButtonActiveClass, "\">\n                                    <i class=\"fas fa-retweet\"></i>\n                                    <span>").concat(postData.retweetUsers.length || "", "</span>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer red\">\n                                <button class=\"likeButton ").concat(likeButtonActiveClass, "\">\n                                    <i class=\"far fa-heart\"></i>\n                                    <span>").concat(postData.likes.length || "", "</span>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n                    \n                </div>\n    </div>");
 }
 
 function timeDifference(current, previous) {

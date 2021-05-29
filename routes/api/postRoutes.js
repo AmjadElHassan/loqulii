@@ -11,26 +11,26 @@ const session = require('express-session')
 app.use(bodyParser.urlencoded({ extended: false }))
 
 
-router.get('/:id',async (req,res,next)=>{
-    try{
-        let postData = await getPosts({_id: req.params.id})
-        if (postData.length==1){
+router.get('/:id', async (req, res, next) => {
+    try {
+        let postData = await getPosts({ _id: req.params.id })
+        if (postData.length == 1) {
             postData = postData[0]
         }
 
         let results = {
             postData: postData,
         }
-        
-        if (postData.replyTo){
+
+        if (postData.replyTo) {
             results.replyTo = postData.replyTo
         }
 
-        results.replies = await getPosts({replyTo: req.params.id})
-        
+        results.replies = await getPosts({ replyTo: req.params.id })
+
         res.status(200).send(results)
     }
-    catch(err){
+    catch (err) {
         console.log(err)
         res.status(400)
     }
@@ -39,21 +39,21 @@ router.get('/:id',async (req,res,next)=>{
 router.get('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
     let searchObj = req.query;
 
-    if (searchObj.isReply){
-        let isReply = (searchObj.isReply=="true")
-        searchObj.replyTo = {$exists: isReply}
+    if (searchObj.isReply) {
+        let isReply = (searchObj.isReply == "true")
+        searchObj.replyTo = { $exists: isReply }
         delete searchObj.isReply
     }
 
-    if (searchObj.followingOnly){
+    if (searchObj.followingOnly) {
         let onlyFollowingPosts = (searchObj.followingOnly == 'true')
-        if (onlyFollowingPosts){
+        if (onlyFollowingPosts) {
             searchObj.postedBy = req.session.user.following
             searchObj.postedBy.push(req.session.user._id)
         }
         delete searchObj.followingOnly
     }
-    let results = await getPosts(searchObj)    
+    let results = await getPosts(searchObj)
     res.status(200).send(results)
 })
 
@@ -67,7 +67,7 @@ router.post('/', async (req, res, next) => {//we configured the router to handle
     try {
         let newPost = await Post.create(postData)
         let populatedNewPost = await User.populate(newPost, { path: "postedBy" })
-        await Post.populate(newPost, {path: "replyTo"})
+        await Post.populate(newPost, { path: "replyTo" })
         res.status(201).send(populatedNewPost)
     } catch (err) {
         console.log(`asynchronous server response: ${err}`)
@@ -92,6 +92,22 @@ router.put('/:id/like', async (req, res, next) => {
     //insert post like
     let post = await Post.findByIdAndUpdate(postId, { [option]: { likes: userId } }, { new: true })
     res.status(200).send(post)
+})
+
+router.put('/:id', async (req, res, next) => {
+    try {
+        if (req.body.pinned !== undefined) {
+            await Post.updateMany({ postedBy: req.session.user._id }, { pinned: false })
+        }
+        await console.log(req.body.pinned, req.params.id)
+        let newPin = await Post.findByIdAndUpdate(req.params.id, req.body,{new: true})
+        console.log(newPin)
+        res.sendStatus(200)
+    }
+    catch (err) {
+        console.log(err)
+        res.status(400).send('failed to pin')
+    }
 })
 
 router.post('/:id/retweets', async (req, res, next) => {
@@ -132,31 +148,31 @@ router.post('/:id/retweets', async (req, res, next) => {
     res.status(200).send(post)
 })
 
-router.delete('/:id', async(req,res,next)=>{
-    try{
-        let postId = {_id: req.params.id}
+router.delete('/:id', async (req, res, next) => {
+    try {
+        let postId = { _id: req.params.id }
         let post = await Post.findOneAndDelete(postId)
         res.sendStatus(202)
     }
-    catch(err){
+    catch (err) {
         console.log(err)
         res.status(400)
     }
 })
 
-async function getPosts(searchObject){
+async function getPosts(searchObject) {
     try {
-        let IdCheck = searchObject!==undefined ?
-         searchObject:
-         null;
+        let IdCheck = searchObject !== undefined ?
+            searchObject :
+            null;
         let results = await Post.find(searchObject)
-        .populate("postedBy")
-        .populate("retweetData")
-        .populate("replyTo")
-        .sort({ "createdAt": -1 })
-        
-    results = await User.populate(results, {path: "replyTo.postedBy"})
-     return await User.populate(results, {path: "retweetData.postedBy"})
+            .populate("postedBy")
+            .populate("retweetData")
+            .populate("replyTo")
+            .sort({ "createdAt": -1 })
+
+        results = await User.populate(results, { path: "replyTo.postedBy" })
+        return await User.populate(results, { path: "retweetData.postedBy" })
     }
     catch (err) {
         console.log(err)

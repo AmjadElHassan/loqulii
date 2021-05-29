@@ -332,6 +332,10 @@ body {
     }
 }
 
+.pinnedContainer{
+    border-bottom: 2rem solid rgba(173, 216, 230, 0.288);
+}
+
 .resultsContainer {
     display: flex;
     flex-direction: column;
@@ -389,6 +393,15 @@ body {
         background-color: transparent;
         border: none;
         color: var(--grayButtonText);
+        *{
+            text-align: center;
+        }
+        &.pinButton.pinned{
+            color: rgb(0, 141, 206);
+            background-color: rgba(213, 252, 216, 0.24);
+            border: solid 0.5px green;
+            border-radius: 20px;
+        }        
 
         &:hover {
             background-color: #d4edff;
