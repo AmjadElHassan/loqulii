@@ -20,62 +20,11 @@ var session = require('express-session');
 app.use(bodyParser.urlencoded({
   extended: false
 }));
-router.get('/:id', function _callee(req, res, next) {
-  var postData, results;
+router.get('/', function _callee(req, res, next) {
+  var searchObj, isReply, onlyFollowingPosts, results;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
-        case 0:
-          _context.prev = 0;
-          _context.next = 3;
-          return regeneratorRuntime.awrap(getPosts({
-            _id: req.params.id
-          }));
-
-        case 3:
-          postData = _context.sent;
-
-          if (postData.length == 1) {
-            postData = postData[0];
-          }
-
-          results = {
-            postData: postData
-          };
-
-          if (postData.replyTo) {
-            results.replyTo = postData.replyTo;
-          }
-
-          _context.next = 9;
-          return regeneratorRuntime.awrap(getPosts({
-            replyTo: req.params.id
-          }));
-
-        case 9:
-          results.replies = _context.sent;
-          res.status(200).send(results);
-          _context.next = 17;
-          break;
-
-        case 13:
-          _context.prev = 13;
-          _context.t0 = _context["catch"](0);
-          console.log(_context.t0);
-          res.status(400);
-
-        case 17:
-        case "end":
-          return _context.stop();
-      }
-    }
-  }, null, null, [[0, 13]]);
-});
-router.get('/', function _callee2(req, res, next) {
-  var searchObj, isReply, onlyFollowingPosts, results;
-  return regeneratorRuntime.async(function _callee2$(_context2) {
-    while (1) {
-      switch (_context2.prev = _context2.next) {
         case 0:
           //we configured the router to handle requests at root "/" 
           searchObj = req.query;
@@ -99,19 +48,78 @@ router.get('/', function _callee2(req, res, next) {
             delete searchObj.followingOnly;
           }
 
-          _context2.next = 5;
+          if (searchObj.search) {
+            searchObj.content = {
+              $regex: searchObj.search,
+              $options: "i"
+            };
+            delete searchObj.search;
+          }
+
+          _context.next = 6;
           return regeneratorRuntime.awrap(getPosts(searchObj));
 
-        case 5:
-          results = _context2.sent;
+        case 6:
+          results = _context.sent;
           res.status(200).send(results);
 
-        case 7:
+        case 8:
+        case "end":
+          return _context.stop();
+      }
+    }
+  });
+});
+router.get('/:id', function _callee2(req, res, next) {
+  var postData, results;
+  return regeneratorRuntime.async(function _callee2$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          _context2.prev = 0;
+          _context2.next = 3;
+          return regeneratorRuntime.awrap(getPosts({
+            _id: req.params.id
+          }));
+
+        case 3:
+          postData = _context2.sent;
+
+          if (postData.length == 1) {
+            postData = postData[0];
+          }
+
+          results = {
+            postData: postData
+          };
+
+          if (postData.replyTo) {
+            results.replyTo = postData.replyTo;
+          }
+
+          _context2.next = 9;
+          return regeneratorRuntime.awrap(getPosts({
+            replyTo: req.params.id
+          }));
+
+        case 9:
+          results.replies = _context2.sent;
+          res.status(200).send(results);
+          _context2.next = 17;
+          break;
+
+        case 13:
+          _context2.prev = 13;
+          _context2.t0 = _context2["catch"](0);
+          console.log(_context2.t0);
+          res.status(400);
+
+        case 17:
         case "end":
           return _context2.stop();
       }
     }
-  });
+  }, null, null, [[0, 13]]);
 });
 router.post('/', function _callee3(req, res, next) {
   var postData, newPost, populatedNewPost;

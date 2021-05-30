@@ -46,12 +46,18 @@ var profileRoute = require("./routes/profileRoutes");
 
 var uploadRoute = require("./routes/uploadRoutes");
 
+var searchRoute = require("./routes/searchRoutes");
+
+var mailRoute = require("./routes/mailRoutes");
+
 app.use("/login", loginRoute);
 app.use("/register", registerRoute);
 app.use("/post", postPageRoute);
 app.use("/logout", logoutRoute);
-app.use("/profile", profileRoute);
-app.use("/uploads", uploadRoute); //api routes
+app.use("/profile", middleware.requireLogin, profileRoute);
+app.use("/uploads", uploadRoute);
+app.use("/search", middleware.requireLogin, searchRoute);
+app.use("/mail", middleware.requireLogin, mailRoute); //api routes
 
 var postRoute = require("./routes/api/postRoutes");
 

@@ -10,6 +10,32 @@ const session = require('express-session')
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
+router.get('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
+    let searchObj = req.query;
+
+    if (searchObj.isReply) {
+        let isReply = (searchObj.isReply == "true")
+        searchObj.replyTo = { $exists: isReply }
+        delete searchObj.isReply
+    }
+
+    if (searchObj.followingOnly) {
+        let onlyFollowingPosts = (searchObj.followingOnly == 'true')
+        if (onlyFollowingPosts) {
+            searchObj.postedBy = req.session.user.following
+            searchObj.postedBy.push(req.session.user._id)
+        }
+        delete searchObj.followingOnly
+    }
+
+    if (searchObj.search){
+        searchObj.content = {$regex: searchObj.search, $options: "i"} 
+        delete searchObj.search
+    }
+    
+    let results = await getPosts(searchObj)
+    res.status(200).send(results)
+})
 
 router.get('/:id', async (req, res, next) => {
     try {
@@ -36,26 +62,6 @@ router.get('/:id', async (req, res, next) => {
     }
 })
 
-router.get('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
-    let searchObj = req.query;
-
-    if (searchObj.isReply) {
-        let isReply = (searchObj.isReply == "true")
-        searchObj.replyTo = { $exists: isReply }
-        delete searchObj.isReply
-    }
-
-    if (searchObj.followingOnly) {
-        let onlyFollowingPosts = (searchObj.followingOnly == 'true')
-        if (onlyFollowingPosts) {
-            searchObj.postedBy = req.session.user.following
-            searchObj.postedBy.push(req.session.user._id)
-        }
-        delete searchObj.followingOnly
-    }
-    let results = await getPosts(searchObj)
-    res.status(200).send(results)
-})
 
 router.post('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
     let postData = {

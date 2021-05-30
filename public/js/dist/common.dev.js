@@ -624,3 +624,30 @@ function outputPostsWithReplies(posts, container) {
     container.append(replyHtml);
   });
 }
+
+function outputUsers(results, container) {
+  container.html("");
+
+  if (results.length == 0) {
+    return container.append("No Results found");
+  }
+
+  results.forEach(function (x) {
+    var html = createUserHtml(x, true);
+    container.append(html);
+  });
+}
+
+function createUserHtml(userData, showFollowButton) {
+  var name = userData.firstName + " " + userData.lastName;
+  var isFollowing = userLoggedIn.following && userLoggedIn.following.includes(userData._id);
+  var text = isFollowing ? "following" : "follow";
+  var buttonClass = isFollowing ? "followButton following" : "followButton";
+  var followButton = "";
+
+  if (showFollowButton && userLoggedIn._id != userData._id) {
+    followButton = "<div class=\"followButtonContainer\">\n                            <button class=\"".concat(buttonClass, "\" data-user=").concat(userData._id, ">\n                                ").concat(text, "\n                            </button>\n                        </div>");
+  }
+
+  return "<div class=\"user\">\n        <div class=\"userImageContainer\">\n            <img src=".concat(userData.profilePic, "></img>\n        </div>\n        <div class=\"userDetailContainer\">\n            <div class=\"header\">\n                <a href=\"/profile/").concat(userData.username, "\">\n                    ").concat(name, "       \n                </a>\n                <span class=\"username\">@").concat(userData.username, "</span>\n            </div>\n        </div>\n        ").concat(followButton, "        \n    </div>");
+}

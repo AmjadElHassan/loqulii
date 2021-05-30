@@ -31,13 +31,17 @@ const logoutRoute = require("./routes/logoutRoutes")
 const postPageRoute = require("./routes/postPageRoutes")
 const profileRoute = require("./routes/profileRoutes")
 const uploadRoute = require("./routes/uploadRoutes")
+const searchRoute = require("./routes/searchRoutes")
+const mailRoute = require("./routes/mailRoutes")
 
 app.use("/login", loginRoute)
 app.use("/register", registerRoute)
 app.use("/post", postPageRoute)
 app.use("/logout", logoutRoute)
-app.use("/profile", profileRoute)
+app.use("/profile", middleware.requireLogin, profileRoute)
 app.use("/uploads", uploadRoute)
+app.use("/search", middleware.requireLogin, searchRoute)
+app.use("/mail", middleware.requireLogin, mailRoute)
 
 //api routes
 const postRoute = require("./routes/api/postRoutes")

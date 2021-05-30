@@ -597,3 +597,26 @@ body {
     max-width: 100%;
     width: 100%;
 }
+
+
+//search Page
+
+.searchBarContainer{
+    position: relative;
+    color: var(--grayText);
+    padding: 10px 1rem;
+    i{
+        position: absolute;
+        top: 1.2rem;
+        left: 1.5rem;
+    }
+    #searchBox{
+        font-weight: 500;
+        height: 2rem;
+        width:100%;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        background-color: var(--grayLight);
+        color: var(--grayText)
+    }
+}

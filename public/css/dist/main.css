@@ -476,3 +476,23 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   max-width: 100%;
   width: 100%;
 }
+
+.searchBarContainer {
+  position: relative;
+  color: var(--grayText);
+  padding: 10px 1rem;
+}
+.searchBarContainer i {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.5rem;
+}
+.searchBarContainer #searchBox {
+  font-weight: 500;
+  height: 2rem;
+  width: 100%;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  background-color: var(--grayLight);
+  color: var(--grayText);
+}
