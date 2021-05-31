@@ -60,11 +60,16 @@ body .mainSectionContainer .titleContainer {
   padding: 0 var(--spacing);
   border-bottom: solid 1px var(--grayLight);
   border-top: solid 1px var(--grayLight);
+  display: flex;
+  flex-direction: row;
   flex-shrink: 0;
 }
 body .mainSectionContainer .titleContainer h1 {
   flex: 1;
   margin: 0.7rem 0;
+}
+body .mainSectionContainer .titleContainer a {
+  margin-top: 0.5rem;
 }
 body .postFormContainer {
   display: flex;
@@ -471,7 +476,8 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   color: var(--blue);
 }
 
-#imagePreview, #coverPreview {
+#imagePreview,
+#coverPreview {
   display: block;
   max-width: 100%;
   width: 100%;
@@ -495,4 +501,121 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   border-radius: 50px;
   background-color: var(--grayLight);
   color: var(--grayText);
+}
+
+.resultsContainer .resultListItem {
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--grayLight);
+}
+.resultsContainer .resultListItem:hover {
+  background-color: #F2F2F2;
+}
+.resultsContainer .resultListItem img {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+}
+.resultsContainer .resultListItem .resultsImageContainer {
+  height: 2.1rem;
+  width: 2.1rem;
+  position: relative;
+  margin-right: 0.6rem;
+  display: flex;
+  align-items: center;
+}
+.resultsContainer .resultListItem .resultsImageContainer.groupChatImage {
+  display: block;
+  position: relative;
+  height: 3rem;
+  width: 3rem;
+  padding: 0;
+  bottom: 0;
+  margin: 0;
+  margin-top: 1rem;
+}
+.resultsContainer .resultListItem .resultsImageContainer.groupChatImage img {
+  height: 2.3rem;
+  width: 2.3rem;
+  border-radius: 50%;
+  position: relative;
+  border: 3px solid #fff;
+  right: 0.25rem;
+}
+.resultsContainer .resultListItem .resultsImageContainer.groupChatImage img:first-of-Type {
+  position: absolute;
+  top: -1rem;
+  right: 0.2rem;
+  height: 2.3rem;
+  width: 2.3rem;
+}
+.resultsContainer .resultListItem .resultsDetailsContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.resultsContainer .resultListItem .resultsDetailsContainer .heading {
+  font-weight: 500;
+}
+.resultsContainer .resultListItem .resultsDetailsContainer .subText {
+  color: var(--grayText);
+  font-size: 0.9rem;
+}
+
+.chatPageContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.chatPageContainer .chatTitleBar {
+  border-bottom: 1px solid var(--lightGrey);
+  display: flex;
+  align-items: center;
+  min-height: 4rem;
+  padding: 0.7rem;
+}
+.chatPageContainer .chatTitleBar label {
+  margin-top: 0.6rem;
+  margin-right: 0.7rem;
+}
+.chatPageContainer .chatTitleBar #userSearchTextBox {
+  border: none;
+  flex: 1;
+  font-weight: 200;
+  min-width: 21rem;
+}
+.chatPageContainer .chatTitleBar #selectedUsers .selectedUser {
+  font-weight: 300;
+  background-color: #CBE5FE;
+  color: #0084ff;
+  padding: 0.2rem;
+  border-radius: 0.2rem;
+  margin: 0.2rem 0.2rem 0 0;
+  display: inline-block;
+}
+.chatPageContainer .resultsContainer * {
+  margin: 0.3rem 0;
+}
+.chatPageContainer .resultsContainer *:hover {
+  cursor: pointer;
+}
+.chatPageContainer #createChatButton {
+  border: none;
+  background-color: var(--blue);
+  color: #fff;
+  padding: 0.5rem 1.2rem;
+  margin: 0.7rem auto;
+  border-radius: 2.2rem;
+}
+.chatPageContainer #createChatButton:disabled {
+  background-color: var(--grayLight);
+  color: var(--grayText);
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

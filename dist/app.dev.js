@@ -63,8 +63,11 @@ var postRoute = require("./routes/api/postRoutes");
 
 var usersRoute = require("./routes/api/usersRoutes");
 
+var chatRoute = require("./routes/api/chatRoutes");
+
 app.use("/api/posts", postRoute);
 app.use("/api/users", usersRoute);
+app.use("/api/chats", chatRoute);
 app.get('/', middleware.requireLogin, function (req, res, next) {
   var payLoad = {
     pageTitle: "Home",

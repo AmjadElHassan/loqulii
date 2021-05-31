@@ -46,8 +46,11 @@ app.use("/mail", middleware.requireLogin, mailRoute)
 //api routes
 const postRoute = require("./routes/api/postRoutes")
 const usersRoute = require("./routes/api/usersRoutes")
+const chatRoute = require("./routes/api/chatRoutes")
+
 app.use("/api/posts", postRoute);
 app.use("/api/users", usersRoute);
+app.use("/api/chats", chatRoute);
 
 
 app.get('/', middleware.requireLogin, (req,res,next)=>{

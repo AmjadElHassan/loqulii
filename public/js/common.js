@@ -1,5 +1,7 @@
 //globals
-let cropper
+let cropper;
+let timer;
+let selectedUsers = []
 
 $("#postTextarea, #replyTextarea").keyup((event) => {
     let textBox = $(event.target)
@@ -275,6 +277,19 @@ $("#imageUploadButton").click((event) => {
     })
 })
 
+$("#createChatButton").click((event) => {
+    let data = JSON.stringify(selectedUsers)
+
+    $.post("/api/chats", {users: data}, async (response)=>{
+
+        if (!response||!response._id){
+            return alert('invalid server response')
+        }
+        window.location.href = `/mail/${response._id}`
+
+    })
+})
+
 
 $(document).on("click", ".followButton", async (event) => {
     let button = $(event.target)
@@ -321,6 +336,33 @@ $(document).on("click", ".post", (event) => {
     }
 })
 
+$("#userSearchTextBox").keydown(async (event) => {
+    clearTimeout(timer);
+    let textbox = $(event.target);
+    let value = await textbox.val();
+
+    if (value=="" && (event.which == 8 || (event.keyCode == 8))){
+        selectedUsers.pop();
+        updateSelectedUsersHtml()
+        $(".resultsContainer").html("")
+
+        if (selectedUsers.length==0){
+            $("#createChatButton").prop("disabled",true)
+        }
+        return
+    }
+
+    timer = setTimeout(async () => {
+        value = textbox.val().trim();
+        
+        if (value == "") {
+            return $(".resultsContainer").html("")
+        } else {
+            searchUsers(value)
+        }
+    }, 1000)
+
+})
 
 function getPostId(target) {
     let isRoot = target.hasClass("post");
@@ -340,8 +382,7 @@ function createPostHtml(postData, postFocus = false) {
     retweetedBy = isRetweet ? postData.postedBy.username : null;
 
     postData = isRetweet ? postData.retweetData : postData
-
-    if (!postData.postedBy._id) {//in the case that the postedby is just an object id
+    if (postData.postedBy._id==null||postData.postedBy._id==undefined) {//in the case that the postedby is just an object id
         return console.log('User object not populated')
     }
 
@@ -566,4 +607,53 @@ function createUserHtml(userData, showFollowButton){
         </div>
         ${followButton}        
     </div>`
+}
+
+function searchUsers(searchTerm){
+    $.get('/api/users', {search: searchTerm}, (response)=>{
+        outputSelectableUsers(response, $(".resultsContainer"))
+    })
+}
+
+function outputSelectableUsers(results, container){
+    container.html("");
+
+    if (results.length==0){
+        return container.append("No Results found");
+    }
+
+    results.forEach(x=>{
+
+        if (x._id == userLoggedIn._id||selectedUsers.some(users => (users._id == x._id))){
+            return
+        }
+
+        let html = createUserHtml(x,false)
+        let element = $(html)
+        element.click(()=>{
+            userSelected(x)
+        })
+        container.append(element)
+    })
+}
+
+function userSelected(user){
+    selectedUsers.push(user);
+    updateSelectedUsersHtml()
+    $("#userSearchTextBox").val("").focus()
+    $(".resultsContainer").html("");
+    $("#createChatButton").prop("disabled", false)
+}
+
+function updateSelectedUsersHtml(){
+    let elements = [];
+
+    selectedUsers.forEach(x=>{
+        let name = x.firstName + " " + x.lastName
+        let userElement = $(`<span class="selectedUser">${name}</span>`)
+        elements.push(userElement)
+    })
+
+    $(".selectedUser").remove();
+    $("#selectedUsers").prepend(elements)
 }

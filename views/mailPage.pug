@@ -1,7 +1,11 @@
 extends layouts/main-layout.pug
 
 block content
-    .tabsContainer
+    .resultsContainer
+
+block headerButton
+    a(href="/mail/new")
+        i.far.fa-plus-square
 
 block scripts 
     script(src="/js/mail.js")
