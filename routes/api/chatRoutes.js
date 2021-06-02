@@ -32,6 +32,24 @@ router.get('/', async (req, res, next) => {
     }
 })
 
+router.get('/:chatId', async (req, res, next) => {
+    try {
+        console.log(req.params.chatId)
+        let results = await Chat.findOne({_id: req.params.chatId,
+            users: {
+                $elemMatch: //return the elements of an array that match the following condition
+                    { $eq: req.session.user._id } //where any value within that element is equal to: our user id
+            }
+        })
+        .populate("users")
+        .sort({ updatedAt: "desc" })
+        res.status(200).send(results)
+    } catch (err) {
+        console.log("cannot retrieve Chats from Db: " + err)
+        res.sendStatus(400)
+    }
+})
+
 router.post('/', async (req, res, next) => {
     try {
         if (!req.body.users) {
@@ -59,6 +77,17 @@ router.post('/', async (req, res, next) => {
 router.post('/messages/:id', async (req, res, next) => {
     let chatMembers = req.body
     res.status(200).send(chatMembers[0])
+})
+
+router.put('/:chatId', async (req, res, next) => {
+    try{
+        let chatNameUpdate = await Chat.findByIdAndUpdate(req.params.chatId, req.body)
+        await res.sendStatus(204)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(400)
+    }
 })
 
 module.exports = router

@@ -33,26 +33,6 @@ function createChatHtml(chatData){
     </a>`
 }
 
-function getChatName(chatData){
-    let chatName = chatData.chatName;
-    if (!chatName) {
-        console.log(chatData.users)
-        let users = getOtherChatUsers(chatData.users)
-        let namesArray = users.map(user=>{
-            return user.firstName + " " + user.lastName
-        })
-        chatName = namesArray.join(", ")
-    }
-
-    return chatName
-}
-
-function getOtherChatUsers(users){
-    if (users.length == 1) return users;
-    let filt = users.filter(x=>x._id!==userLoggedIn._id)
-    return filt
-}
-
 function getChatImageElements(chatData){
     let users = getOtherChatUsers(chatData.users)
 

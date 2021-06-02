@@ -146,7 +146,7 @@ router.get('/:chatId', function _callee3(req, res, next) {
 
 function getChatbyUserId(userLoggedIn, otherUserId) {
   return Chat.findOneAndUpdate({
-    //first Object: filters for chats with only 2 people
+    //first Object: filters for chats with only 2 people. 
     isGroupChat: false,
     users: {
       $size: 2,
@@ -160,7 +160,7 @@ function getChatbyUserId(userLoggedIn, otherUserId) {
         }
       }]
     }
-  }, //second object: if nothing returned from filter, create new chat with these users
+  }, //second object: if nothing returned from filter, the $setOnInsert option works with the upsert option below to create a new chat, specifically with the users i've designated below
   {
     $setOnInsert: {
       users: [userLoggedIn, otherUserId]

@@ -88,6 +88,19 @@ mixin createUnpinPostModal()
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
                     button#submitUnpinPost.btn.btn-primary(type='button') remove
 
+mixin createChatNameModal(chat)
+    #chatNameModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='chatNameModalLabel' aria-hidden='true' style="padding:0 0 0 0")
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#chatNameModalLabel.modal-title Name your chat
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                .modal-body
+                    input#chatNameTextBox(type="text", placeholder="Enter a name for this chat", value=chat.chatName)
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                    button#submitChatName.btn.btn-primary(type='button') create
 
 mixin createDeletePostModal()
     #deletePostModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='deletePostModalLabel' aria-hidden='true' style="padding:0 0 0 0")
@@ -118,3 +131,22 @@ mixin createTab(name,href,isSelected)
     - className = isSelected? "tab active": "tab";
     a(href=href class=className)
         span #{name}
+
+mixin createChatImage(chatData, userLoggedIn)
+    if(!chatData)
+        return 
+    - let i = 0
+    - let maxImagesToShow = 3
+    - let remainingUsers = chatData.users.length - maxImagesToShow 
+    - remainingUsers--//removing our own image
+    .chatImagesContainer 
+        if remainingUsers > 0
+            .usersCount 
+                span +#{remainingUsers}
+        each user in chatData.users 
+            if chatData.users.length != 1 && user._id == userLoggedIn._id 
+                - continue
+            else if i>= maxImagesToShow 
+                -break
+            img(src=user.profilePic, alt="user profile pic", title=user.firstName)
+            - i++
