@@ -76,8 +76,7 @@ router.get('/:chatId', function _callee2(req, res, next) {
       switch (_context2.prev = _context2.next) {
         case 0:
           _context2.prev = 0;
-          console.log(req.params.chatId);
-          _context2.next = 4;
+          _context2.next = 3;
           return regeneratorRuntime.awrap(Chat.findOne({
             _id: req.params.chatId,
             users: {
@@ -91,24 +90,24 @@ router.get('/:chatId', function _callee2(req, res, next) {
             updatedAt: "desc"
           }));
 
-        case 4:
+        case 3:
           results = _context2.sent;
           res.status(200).send(results);
-          _context2.next = 12;
+          _context2.next = 11;
           break;
 
-        case 8:
-          _context2.prev = 8;
+        case 7:
+          _context2.prev = 7;
           _context2.t0 = _context2["catch"](0);
           console.log("cannot retrieve Chats from Db: " + _context2.t0);
           res.sendStatus(400);
 
-        case 12:
+        case 11:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[0, 8]]);
+  }, null, null, [[0, 7]]);
 });
 router.post('/', function _callee3(req, res, next) {
   var chatMembers, chatData, newChat;

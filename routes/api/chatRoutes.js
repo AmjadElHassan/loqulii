@@ -34,7 +34,6 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:chatId', async (req, res, next) => {
     try {
-        console.log(req.params.chatId)
         let results = await Chat.findOne({_id: req.params.chatId,
             users: {
                 $elemMatch: //return the elements of an array that match the following condition
