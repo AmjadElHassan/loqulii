@@ -48,31 +48,38 @@ router.get('/', function _callee(req, res, next) {
               } //where any value within that element is equal to: our user id
 
             }
-          }).populate("users").sort({
+          }).populate("users").populate("latestMessage").sort({
             updatedAt: "desc"
           }));
 
         case 3:
           results = _context.sent;
+          _context.next = 6;
+          return regeneratorRuntime.awrap(User.populate(results, {
+            path: "latestMessage.sender"
+          }));
+
+        case 6:
+          results = _context.sent;
           res.status(200).send(results);
-          _context.next = 11;
+          _context.next = 14;
           break;
 
-        case 7:
-          _context.prev = 7;
+        case 10:
+          _context.prev = 10;
           _context.t0 = _context["catch"](0);
           console.log("cannot retrieve Chats from Db: " + _context.t0);
           res.sendStatus(400);
 
-        case 11:
+        case 14:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[0, 7]]);
+  }, null, null, [[0, 10]]);
 });
 router.post('/', function _callee2(req, res, next) {
-  var newMessage, latest;
+  var newMessage, latest, metaLatest, newChatMessage;
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -94,21 +101,50 @@ router.post('/', function _callee2(req, res, next) {
 
         case 5:
           latest = _context2.sent;
+          _context2.next = 8;
+          return regeneratorRuntime.awrap(latest.populate("sender").execPopulate());
+
+        case 8:
+          metaLatest = _context2.sent;
+          _context2.next = 11;
+          return regeneratorRuntime.awrap(metaLatest.populate("chat").execPopulate());
+
+        case 11:
+          metaLatest = _context2.sent;
+          _context2.next = 14;
+          return regeneratorRuntime.awrap(User.populate(latest, {
+            path: "chat.users"
+          }));
+
+        case 14:
+          metaLatest = _context2.sent;
+          _context2.next = 17;
+          return regeneratorRuntime.awrap(Chat.findById(req.body.chatId).populate("latestMessage"));
+
+        case 17:
+          newChatMessage = _context2.sent;
+          _context2.next = 20;
+          return regeneratorRuntime.awrap(newChatMessage.update({
+            latestMessage: latest
+          }));
+
+        case 20:
+          newChatMessage = _context2.sent;
           res.status(201).send(latest);
-          _context2.next = 13;
+          _context2.next = 28;
           break;
 
-        case 9:
-          _context2.prev = 9;
+        case 24:
+          _context2.prev = 24;
           _context2.t0 = _context2["catch"](0);
           console.log("server Error: " + _context2.t0);
           res.sendStatus(400);
 
-        case 13:
+        case 28:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[0, 9]]);
+  }, null, null, [[0, 24]]);
 });
 module.exports = router;

@@ -24,8 +24,9 @@ router.get('/', async (req, res, next) => {
             }
         })
         .populate("users")
+        .populate("latestMessage")
         .sort({ updatedAt: "desc" })
-
+        results = (await User.populate(results, {path: "latestMessage.sender"}))
         res.status(200).send(results)
     } catch (err) {
         console.log("cannot retrieve Chats from Db: " + err)
@@ -47,7 +48,12 @@ router.post('/', async (req, res, next) => {
             chat: req.body.chatId
         }
 
-        let latest = await Message.create(newMessage)
+        const latest = await Message.create(newMessage)
+        let metaLatest = await latest.populate("sender").execPopulate()
+        metaLatest = await metaLatest.populate("chat").execPopulate()
+        metaLatest = await User.populate(latest, {path: "chat.users"})
+        let newChatMessage = await Chat.findById(req.body.chatId).populate("latestMessage")
+        newChatMessage = await newChatMessage.update({latestMessage: latest})
         res.status(201).send(latest)
     }
     catch (err) {

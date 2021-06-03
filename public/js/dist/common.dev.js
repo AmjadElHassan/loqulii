@@ -797,7 +797,7 @@ function getChatName(chatData) {
   var chatName = chatData.chatName;
 
   if (!chatName) {
-    var users = getOtherChatUsers(chatData.users);
+    var users = getOtherChatUsers(chatData);
     var namesArray = users.map(function (user) {
       return user.firstName + " " + user.lastName;
     });
@@ -808,6 +808,10 @@ function getChatName(chatData) {
 }
 
 function getOtherChatUsers(users) {
+  if (users.users) {
+    users = users.users;
+  }
+
   if (users.length == 1) return users;
   var filt = users.filter(function (x) {
     return x._id !== userLoggedIn._id;

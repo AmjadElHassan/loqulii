@@ -2,6 +2,11 @@ $(document).ready(()=>{
     $.get(`/api/chats/${chatId}`, (data)=>{
         $("#chatName").text(getChatName(data))
     })
+    $.get(`/api/chats/${chatId}/messages`, (data)=>{
+        data.forEach(message=>{
+            addChatMessageHtml(message)
+        })
+    })
 })
 
 $("#submitChatName").click(() => {
@@ -31,7 +36,6 @@ $(".inputTextBox").keydown((event)=>{
         messageSubmitted()
         return false
     }
-    console.log('we here')
 })
 
 function messageSubmitted(){
@@ -43,8 +47,16 @@ function messageSubmitted(){
     }
 }
 
+
 function sendMessage(content){
-    $.post("/api/messages", {content: content, chatId: chatId}, (data)=>{
+    $.post("/api/messages", {content: content, chatId: chatId}, (data,status,xhr)=>{
+        if (xhr.status!=201){
+            alert("could not send message")
+            $("inputTextBox").val(content)
+            return
+        }
+        $("#chatName").text(getChatName(data.chat))
+    
         addChatMessageHtml(data)
     })
 }
@@ -59,11 +71,12 @@ function addChatMessageHtml(message){
 }
 
 function createMessageHtml(message){
+    console.log(message)
     let isMine = message.sender._id == userLoggedIn._id
     let liClassName = isMine ? "mine": "theirs"
 
     return `
-    <li class='${liClassName}'>
+    <li class='message ${liClassName}'>
         <div class="messageContainer">
         <span class="messageBody">
             ${message.content}

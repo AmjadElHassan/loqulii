@@ -1,4 +1,4 @@
 /node_modules
-database.js
-/uploads
-**/.env
+# database.js
+# /uploads
+# **/.env

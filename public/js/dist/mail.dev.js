@@ -24,7 +24,7 @@ function outputChatList(chatList, container) {
 function createChatHtml(chatData) {
   var chatName = getChatName(chatData);
   var image = getChatImageElements(chatData);
-  var latestMessage = "Dis dat new new";
+  var latestMessage = getLatestMessage(chatData.latestMessage);
   return "<a href=\"/mail/".concat(chatData._id, "\" class=\"resultListItem\">\n    ").concat(image, "\n    <div class=\"resultsDetailsContainer ellipsis\">\n        <span class=\"heading ellipsis\">").concat(chatName, "</span>\n        <span class=\"subText ellipsis\">").concat(latestMessage, "</span>\n    </div>\n    </a>");
 }
 
@@ -47,4 +47,13 @@ function getUserChatImageElement(user) {
   }
 
   return "<img src='".concat(user.profilePic, "' alt=\"user profile Pic\">");
+}
+
+function getLatestMessage(chatInfo) {
+  if (!chatInfo || chatInfo == null || chatInfo == undefined) {
+    return 'new chat';
+  } else {
+    var sender = chatInfo.sender;
+    return "".concat(sender.firstName, " ").concat(sender.lastName, ": ").concat(chatInfo.content);
+  }
 }

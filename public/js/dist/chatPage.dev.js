@@ -4,6 +4,11 @@ $(document).ready(function () {
   $.get("/api/chats/".concat(chatId), function (data) {
     $("#chatName").text(getChatName(data));
   });
+  $.get("/api/chats/".concat(chatId, "/messages"), function (data) {
+    data.forEach(function (message) {
+      addChatMessageHtml(message);
+    });
+  });
 });
 $("#submitChatName").click(function () {
   var name = $("#chatNameTextBox").val().trim();
@@ -30,8 +35,6 @@ $(".inputTextBox").keydown(function (event) {
     messageSubmitted();
     return false;
   }
-
-  console.log('we here');
 });
 
 function messageSubmitted() {
@@ -47,7 +50,14 @@ function sendMessage(content) {
   $.post("/api/messages", {
     content: content,
     chatId: chatId
-  }, function (data) {
+  }, function (data, status, xhr) {
+    if (xhr.status != 201) {
+      alert("could not send message");
+      $("inputTextBox").val(content);
+      return;
+    }
+
+    $("#chatName").text(getChatName(data.chat));
     addChatMessageHtml(data);
   });
 }
@@ -62,7 +72,8 @@ function addChatMessageHtml(message) {
 }
 
 function createMessageHtml(message) {
+  console.log(message);
   var isMine = message.sender._id == userLoggedIn._id;
   var liClassName = isMine ? "mine" : "theirs";
-  return "\n    <li class='".concat(liClassName, "'>\n        <div class=\"messageContainer\">\n        <span class=\"messageBody\">\n            ").concat(message.content, "\n        </span>\n        </div>\n    \n    </li>");
+  return "\n    <li class='message ".concat(liClassName, "'>\n        <div class=\"messageContainer\">\n        <span class=\"messageBody\">\n            ").concat(message.content, "\n        </span>\n        </div>\n    \n    </li>");
 }

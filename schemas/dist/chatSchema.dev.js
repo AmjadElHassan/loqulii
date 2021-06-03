@@ -16,10 +16,10 @@ var ChatSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   }],
-  latestMessage: [{
+  latestMessage: {
     type: Schema.Types.ObjectId,
     ref: 'Message'
-  }]
+  }
 }, {
   timestamps: true
 });

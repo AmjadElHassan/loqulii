@@ -13,6 +13,8 @@ var User = require('../../schemas/UserSchema.js');
 
 var Chat = require('../../schemas/ChatSchema.js');
 
+var Message = require('../../schemas/MessageSchema.js');
+
 var bcrypt = require("bcrypt");
 
 var session = require('express-session');
@@ -46,28 +48,35 @@ router.get('/', function _callee(req, res, next) {
               } //where any value within that element is equal to: our user id
 
             }
-          }).populate("users").sort({
+          }).populate("users").populate("latestMessage").sort({
             updatedAt: "desc"
           }));
 
         case 3:
           results = _context.sent;
+          _context.next = 6;
+          return regeneratorRuntime.awrap(User.populate(results, {
+            path: "latestMessage.sender"
+          }));
+
+        case 6:
+          results = _context.sent;
           res.status(200).send(results);
-          _context.next = 11;
+          _context.next = 14;
           break;
 
-        case 7:
-          _context.prev = 7;
+        case 10:
+          _context.prev = 10;
           _context.t0 = _context["catch"](0);
           console.log("cannot retrieve Chats from Db: " + _context.t0);
           res.sendStatus(400);
 
-        case 11:
+        case 14:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[0, 7]]);
+  }, null, null, [[0, 10]]);
 });
 router.get('/:chatId', function _callee2(req, res, next) {
   var results;
@@ -109,29 +118,61 @@ router.get('/:chatId', function _callee2(req, res, next) {
     }
   }, null, null, [[0, 7]]);
 });
-router.post('/', function _callee3(req, res, next) {
-  var chatMembers, chatData, newChat;
+router.get('/:chatId/messages', function _callee3(req, res, next) {
+  var results;
   return regeneratorRuntime.async(function _callee3$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
           _context3.prev = 0;
+          _context3.next = 3;
+          return regeneratorRuntime.awrap(Message.find({
+            chat: req.params.chatId
+          }).populate("sender"));
+
+        case 3:
+          results = _context3.sent;
+          // .sort({ updatedAt: "-1" })
+          res.status(200).send(results);
+          _context3.next = 11;
+          break;
+
+        case 7:
+          _context3.prev = 7;
+          _context3.t0 = _context3["catch"](0);
+          console.log("cannot retrieve Chats from Db: " + _context3.t0);
+          res.sendStatus(400);
+
+        case 11:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  }, null, null, [[0, 7]]);
+});
+router.post('/', function _callee4(req, res, next) {
+  var chatMembers, chatData, newChat;
+  return regeneratorRuntime.async(function _callee4$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.prev = 0;
 
           if (req.body.users) {
-            _context3.next = 4;
+            _context4.next = 4;
             break;
           }
 
           console.log('no request body received');
-          return _context3.abrupt("return", res.sendStatus(400));
+          return _context4.abrupt("return", res.sendStatus(400));
 
         case 4:
-          _context3.next = 6;
+          _context4.next = 6;
           return regeneratorRuntime.awrap(JSON.parse(req.body.users));
 
         case 6:
-          chatMembers = _context3.sent;
-          _context3.next = 9;
+          chatMembers = _context4.sent;
+          _context4.next = 9;
           return regeneratorRuntime.awrap(chatMembers.push(req.session.user));
 
         case 9:
@@ -139,44 +180,32 @@ router.post('/', function _callee3(req, res, next) {
             isGroupChat: true,
             users: chatMembers
           };
-          _context3.next = 12;
+          _context4.next = 12;
           return regeneratorRuntime.awrap(Chat.create(chatData));
 
         case 12:
-          newChat = _context3.sent;
-          res.status(200).send(newChat);
-          _context3.next = 20;
+          newChat = _context4.sent;
+          res.status(201).send(newChat);
+          _context4.next = 20;
           break;
 
         case 16:
-          _context3.prev = 16;
-          _context3.t0 = _context3["catch"](0);
-          console.log("server Error: " + _context3.t0);
+          _context4.prev = 16;
+          _context4.t0 = _context4["catch"](0);
+          console.log("server Error: " + _context4.t0);
           res.sendStatus(400);
 
         case 20:
         case "end":
-          return _context3.stop();
-      }
-    }
-  }, null, null, [[0, 16]]);
-});
-router.post('/messages/:id', function _callee4(req, res, next) {
-  var chatMembers;
-  return regeneratorRuntime.async(function _callee4$(_context4) {
-    while (1) {
-      switch (_context4.prev = _context4.next) {
-        case 0:
-          chatMembers = req.body;
-          res.status(200).send(chatMembers[0]);
-
-        case 2:
-        case "end":
           return _context4.stop();
       }
     }
-  });
-});
+  }, null, null, [[0, 16]]);
+}); // router.post('/messages/:id', async (req, res, next) => {
+//     let chatMembers = req.body
+//     res.status(200).send(chatMembers[0])
+// })
+
 router.put('/:chatId', function _callee5(req, res, next) {
   var chatNameUpdate;
   return regeneratorRuntime.async(function _callee5$(_context5) {

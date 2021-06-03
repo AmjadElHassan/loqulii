@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const Post = require('../../schemas/PostSchema.js')
 const User = require('../../schemas/UserSchema.js')
 const Chat = require('../../schemas/ChatSchema.js')
+const Message = require('../../schemas/MessageSchema.js')
 let bcrypt = require("bcrypt")
 const session = require('express-session')
 const multer = require('multer')
@@ -23,7 +24,10 @@ router.get('/', async (req, res, next) => {
             }
         })
         .populate("users")
+        .populate("latestMessage")
         .sort({ updatedAt: "desc" })
+
+        results = (await User.populate(results, {path: "latestMessage.sender"}))
 
         res.status(200).send(results)
     } catch (err) {
@@ -49,6 +53,19 @@ router.get('/:chatId', async (req, res, next) => {
     }
 })
 
+router.get('/:chatId/messages', async (req, res, next) => {
+    try {
+        let results = await Message.find({chat: req.params.chatId})
+        .populate("sender")
+        // .sort({ updatedAt: "-1" })
+        res.status(200).send(results)
+    } catch (err) {
+        console.log("cannot retrieve Chats from Db: " + err)
+        res.sendStatus(400)
+    }
+
+})
+
 router.post('/', async (req, res, next) => {
     try {
         if (!req.body.users) {
@@ -65,7 +82,7 @@ router.post('/', async (req, res, next) => {
 
         let newChat = await Chat.create(chatData)
 
-        res.status(200).send(newChat)
+        res.status(201).send(newChat)
     }
     catch (err) {
         console.log("server Error: " + err)
@@ -73,10 +90,10 @@ router.post('/', async (req, res, next) => {
     }
 })
 
-router.post('/messages/:id', async (req, res, next) => {
-    let chatMembers = req.body
-    res.status(200).send(chatMembers[0])
-})
+// router.post('/messages/:id', async (req, res, next) => {
+//     let chatMembers = req.body
+//     res.status(200).send(chatMembers[0])
+// })
 
 router.put('/:chatId', async (req, res, next) => {
     try{

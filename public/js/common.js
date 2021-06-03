@@ -661,7 +661,7 @@ function updateSelectedUsersHtml(){
 function getChatName(chatData){
     let chatName = chatData.chatName;
     if (!chatName) {
-        let users = getOtherChatUsers(chatData.users)
+        let users = getOtherChatUsers(chatData)
         let namesArray = users.map(user=>{
             return user.firstName + " " + user.lastName
         })
@@ -672,6 +672,9 @@ function getChatName(chatData){
 }
 
 function getOtherChatUsers(users){
+    if (users.users){
+        users = users.users
+    }
     if (users.length == 1) return users;
     let filt = users.filter(x=>x._id!==userLoggedIn._id)
     return filt

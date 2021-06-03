@@ -23,7 +23,7 @@ function outputChatList(chatList, container){
 function createChatHtml(chatData){
     let chatName = getChatName(chatData)
     let image = getChatImageElements(chatData)
-    let latestMessage = "Dis dat new new"
+    let latestMessage = getLatestMessage(chatData.latestMessage)
     return `<a href="/mail/${chatData._id}" class="resultListItem">
     ${image}
     <div class="resultsDetailsContainer ellipsis">
@@ -52,4 +52,14 @@ function getUserChatImageElement(user){
     }
 
     return `<img src='${user.profilePic}' alt="user profile Pic">`
+}
+
+function getLatestMessage(chatInfo){
+    if (!chatInfo||chatInfo==null||chatInfo==undefined){
+        return 'new chat'
+    } else {
+        let sender = chatInfo.sender;
+        return `${sender.firstName} ${sender.lastName}: ${chatInfo.content}`
+
+    }
 }
