@@ -10,7 +10,6 @@ Current version supports:
 -  making/deleting posts, replying to posts, liking and retweeting other users posts 
 -  profile page customization with working image cropping and upload for cover Photo and profile pic photo (TODO: media posts infrastructure: video)
 -  search functionality for both users and posts. user search will filter for both username, and first and last name.
--  search functionality for both users and posts. user search will filter for both username, and first and last name.
 -  User Chat functionality is available for both group chats and 1-on-1 chats. chat Name can be changed and updates for all users. 
 
 TODO:
