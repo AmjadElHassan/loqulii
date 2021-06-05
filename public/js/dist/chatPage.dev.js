@@ -5,9 +5,15 @@ $(document).ready(function () {
     $("#chatName").text(getChatName(data));
   });
   $.get("/api/chats/".concat(chatId, "/messages"), function (data) {
-    data.forEach(function (message) {
-      addChatMessageHtml(message);
+    var messages = [];
+    var lastSenderId = "";
+    data.forEach(function (message, index) {
+      var html = createMessageHtml(message, data[index + 1], lastSenderId);
+      messages.push(html);
+      lastSenderId = message.sender._id;
     });
+    var messagesHtml = messages.join('');
+    addMessagesHtmlToPage(messagesHtml);
   });
 });
 $("#submitChatName").click(function () {
@@ -67,13 +73,23 @@ function addChatMessageHtml(message) {
     return alert("invalid message");
   }
 
-  var messageDiv = createMessageHtml(message);
-  $(".chatMessages").append(messageDiv);
+  var messageDiv = createMessageHtml(message, null, '');
+  addMessagesHtmlToPage(messageDiv);
 }
 
-function createMessageHtml(message) {
-  console.log(message);
+function createMessageHtml(message, nextMessage, lastSenderId) {
+  console.log(message, nextMessage);
+  var sender = message.sender;
+  var senderName = sender.firstName + ' ' + sender.lastName;
+  var currentSenderId = sender._id;
+  var nextSenderId = nextMessage != undefined ? nextMessage.sender._id : "";
+  var isFirst = lastSenderId != currentSenderId ? "first" : "";
+  var isLast = nextSenderId != currentSenderId ? "last" : "";
   var isMine = message.sender._id == userLoggedIn._id;
   var liClassName = isMine ? "mine" : "theirs";
-  return "\n    <li class='message ".concat(liClassName, "'>\n        <div class=\"messageContainer\">\n        <span class=\"messageBody\">\n            ").concat(message.content, "\n        </span>\n        </div>\n    \n    </li>");
+  return "\n    <li class='message ".concat(liClassName, " ").concat(isFirst, " ").concat(isLast, "'>\n        <div class=\"messageContainer\">\n        <span class=\"messageBody\">\n            ").concat(message.content, "\n        </span>\n        </div>\n    \n    </li>");
+}
+
+function addMessagesHtmlToPage(html) {
+  $(".chatMessages").append(html); //TODO: SCROLL TO BOTTOM
 }

@@ -714,6 +714,32 @@ button {
   background-color: var(--blue);
   color: #fff;
 }
+.chatPageContainer .mainContentContainer .chatContainer .chatMessages .message.mine.first .messageBody {
+  border-bottom-right-radius: 2px;
+}
+.chatPageContainer .mainContentContainer .chatContainer .chatMessages .message.mine.last .messageBody {
+  border-bottom-right-radius: 18px;
+}
+.chatPageContainer .mainContentContainer .chatContainer .chatMessages .message.mine:not(.first):not(.last) .messageBody {
+  border-bottom-right-radius: 2px;
+  border-top-right-radius: 2px;
+}
+.chatPageContainer .mainContentContainer .chatContainer .chatMessages .message.mine.last:not(.first) .messageBody {
+  border-top-right-radius: 2px;
+}
+.chatPageContainer .mainContentContainer .chatContainer .chatMessages .message.theirs.first .messageBody {
+  border-bottom-left-radius: 2px;
+}
+.chatPageContainer .mainContentContainer .chatContainer .chatMessages .message.theirs.last .messageBody {
+  border-bottom-left-radius: 18px;
+}
+.chatPageContainer .mainContentContainer .chatContainer .chatMessages .message.theirs:not(.first):not(.last) .messageBody {
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+}
+.chatPageContainer .mainContentContainer .chatContainer .chatMessages .message.theirs.last:not(.first) .messageBody {
+  border-top-left-radius: 2px;
+}
 .chatPageContainer .mainContentContainer .chatContainer .footer {
   display: flex;
   padding: var(--spacing);

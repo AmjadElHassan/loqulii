@@ -861,13 +861,58 @@ button {
                         }    
 
                     }
-                    &.mine{
+                    &.mine{                        
                         flex-direction: row-reverse;
                         .messageBody{
                             background-color: var(--blue);
                             color: #fff;
-
                         }
+                        &.first{
+                            .messageBody{
+                                border-bottom-right-radius: 2px;
+                            }
+                        }
+                        &.last{
+                            .messageBody{
+                                border-bottom-right-radius: 18px;
+                            }
+                        }
+                        &:not(.first):not(.last){
+                            .messageBody{
+                                border-bottom-right-radius: 2px;
+                                border-top-right-radius: 2px;
+                            }
+                        }
+                        &.last:not(.first){
+                            .messageBody{
+                                border-top-right-radius: 2px;
+                            }
+                        }
+
+                    }
+                    &.theirs{                        
+                        &.first{
+                            .messageBody{
+                                border-bottom-left-radius: 2px;
+                            }
+                        }
+                        &.last{
+                            .messageBody{
+                                border-bottom-left-radius: 18px;
+                            }
+                        }
+                        &:not(.first):not(.last){
+                            .messageBody{
+                                border-bottom-left-radius: 2px;
+                                border-top-left-radius: 2px;
+                            }
+                        }
+                        &.last:not(.first){
+                            .messageBody{
+                                border-top-left-radius: 2px;
+                            }
+                        }
+
                     }
 
                 }
