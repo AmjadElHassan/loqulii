@@ -87,7 +87,23 @@ function createMessageHtml(message, nextMessage, lastSenderId) {
   var isLast = nextSenderId != currentSenderId ? "last" : "";
   var isMine = message.sender._id == userLoggedIn._id;
   var liClassName = isMine ? "mine" : "theirs";
-  return "\n    <li class='message ".concat(liClassName, " ").concat(isFirst, " ").concat(isLast, "'>\n        <div class=\"messageContainer\">\n        <span class=\"messageBody\">\n            ").concat(message.content, "\n        </span>\n        </div>\n    \n    </li>");
+  var nameElement = "";
+  var imageContainer = "";
+  var profileImage = "";
+
+  if (isFirst == "first") {
+    nameElement = !isMine ? "<span class=\"senderName\">".concat(senderName, "</span>") : "";
+  }
+
+  if (isLast == "last") {
+    profileImage = "<img src=\"".concat(sender.profilePic, "\">");
+  }
+
+  if (!isMine) {
+    imageContainer = "<div class='imageContainer'>".concat(profileImage, "</div>");
+  }
+
+  return "\n    <li class='message ".concat(liClassName, " ").concat(isFirst, " ").concat(isLast, "'>\n        ").concat(imageContainer, "\n        <div class=\"messageContainer\">\n        ").concat(nameElement, "\n        <span class=\"messageBody\">\n            ").concat(message.content, "\n        </span>\n        </div>\n    \n    </li>");
 }
 
 function addMessagesHtmlToPage(html) {

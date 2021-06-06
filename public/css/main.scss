@@ -731,7 +731,7 @@ button {
     }
 }
 
-
+//newChat page
 .chatPageContainer {
     display: flex;
     flex-direction: column;
@@ -803,6 +803,7 @@ button {
     flex-direction: column;
     min-height: 0;
     flex: 1;
+    flex-basis: 0;
 
     .chatTitleBarContainer {
         border-bottom: 1px solid var(--grayLight);
@@ -826,20 +827,21 @@ button {
     .mainContentContainer {
         display: flex;
         flex: 1;
-        max-height: 80vh;
+        // max-height: 100%;
+        overflow-y: hidden;
         .chatContainer {
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow-y: hidden;
-            height:100%;
+            overflow-y: auto;
+            // height:100%;
             .chatMessages{
                 flex: 1;
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-end;
-                overflow-y: auto;
-                max-height:100%;
+                // overflow-y: auto;
+                // max-height:100%;
                 padding: var(--spacing);
                 .message{
                     padding-bottom: 0.13rem;
@@ -849,10 +851,23 @@ button {
                     flex-shrink: 0;
                     flex:0;
                     -webkit-flex: 0;
+                    .imageContainer{
+                        height: 1.5rem;
+                        width: 1.5rem;
+                        margin-right: 0.5rem;
+                        img{
+                            height: 100%;
+                            border-radius: 50%;
+                            vertical-align: bottom;
+                        }
+                    }
                     .messageContainer{
                         display: flex;
                         flex-direction: column;
                         max-width: 55%;
+                        .senderName{
+                            color: rgba(0,0,0,0.4)
+                        }
                         .messageBody{
                             background-color: #f1f0f0;
                             padding: 0.4rem 0.8rem;
@@ -861,8 +876,14 @@ button {
                         }    
 
                     }
+                    &.last{
+                        margin-bottom: 0.4rem;
+                    }
                     &.mine{                        
                         flex-direction: row-reverse;
+                        .messageContainer{
+                            align-items: flex-end;
+                        }
                         .messageBody{
                             background-color: var(--blue);
                             color: #fff;
@@ -890,7 +911,11 @@ button {
                         }
 
                     }
-                    &.theirs{                        
+                    &.theirs{       
+                        .messageContainer{
+                            align-items: flex-start;
+                        }
+                 
                         &.first{
                             .messageBody{
                                 border-bottom-left-radius: 2px;
@@ -970,10 +995,11 @@ button {
 
         }
     }
+    #chatNameTextBox{
+        width: 100%;
+    }    
 }
-#chatNameTextBox{
-    width: 100%;
-}
+
 
 
 

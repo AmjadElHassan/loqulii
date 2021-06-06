@@ -90,10 +90,23 @@ function createMessageHtml(message, nextMessage, lastSenderId){
 
     let isMine = message.sender._id == userLoggedIn._id
     let liClassName = isMine ? "mine": "theirs"
-
+    let nameElement = ""
+    let imageContainer = ""
+    let profileImage = ""
+    if (isFirst=="first"){
+        nameElement = !isMine ? `<span class="senderName">${senderName}</span>`:""
+    }
+    if (isLast=="last"){
+        profileImage = `<img src="${sender.profilePic}">`
+    }
+    if (!isMine){
+        imageContainer = `<div class='imageContainer'>${profileImage}</div>`
+    }
     return `
     <li class='message ${liClassName} ${isFirst} ${isLast}'>
+        ${imageContainer}
         <div class="messageContainer">
+        ${nameElement}
         <span class="messageBody">
             ${message.content}
         </span>
