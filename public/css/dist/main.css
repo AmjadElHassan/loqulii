@@ -398,6 +398,25 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   align-items: flex-start;
   justify-content: center;
 }
+@media (max-width: 27rem) {
+  .post .mainContentContainer .postContentContainer .header {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .post .mainContentContainer .postContentContainer .header .displayName {
+    position: relative;
+    width: 100%;
+    text-align: left;
+  }
+  .post .mainContentContainer .postContentContainer .header .creatorButtons {
+    position: relative;
+    top: 1rem;
+  }
+  .post .mainContentContainer .postContentContainer .header .username, .post .mainContentContainer .postContentContainer .header .date {
+    position: relative;
+    top: -1.25rem;
+  }
+}
 .post .mainContentContainer .postContentContainer .header * {
   padding-right: 0.5rem;
 }
@@ -429,6 +448,18 @@ body #replyModal .modal-dialog .modal-content .modal-body .postFormContainer {
   width: 1rem;
   height: 1rem;
   margin: 0rem 0.5rem;
+}
+@media (max-width: 27rem) {
+  .post .mainContentContainer .postContentContainer .postBody {
+    position: relative;
+    display: block;
+    width: fill;
+    text-align: left;
+    margin: 2rem 0;
+  }
+  .post .mainContentContainer .postContentContainer .postBody span {
+    vertical-align: middle;
+  }
 }
 .post .mainContentContainer .postContentContainer .postFooter {
   display: flex;
@@ -668,6 +699,7 @@ button {
   cursor: text;
 }
 .chatPageContainer .mainContentContainer {
+  position: relative;
   display: flex;
   flex: 1;
   overflow-y: hidden;
