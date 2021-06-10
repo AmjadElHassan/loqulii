@@ -1067,3 +1067,14 @@ button {
 
 
 //universal attributes
+
+.loadingSpinnerContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    img{
+        width: 50%;
+        max-width: 20rem;
+    }
+}

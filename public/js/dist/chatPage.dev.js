@@ -14,6 +14,9 @@ $(document).ready(function () {
     });
     var messagesHtml = messages.join('');
     addMessagesHtmlToPage(messagesHtml);
+    scrollToBottom(false);
+    $(".loadingSpinnerContainer").remove();
+    $(".chatContainer").css("visibility", "visible");
   });
 });
 $("#submitChatName").click(function () {
@@ -75,6 +78,7 @@ function addChatMessageHtml(message) {
 
   var messageDiv = createMessageHtml(message, null, '');
   addMessagesHtmlToPage(messageDiv);
+  scrollToBottom(true);
 }
 
 function createMessageHtml(message, nextMessage, lastSenderId) {
@@ -108,4 +112,17 @@ function createMessageHtml(message, nextMessage, lastSenderId) {
 
 function addMessagesHtmlToPage(html) {
   $(".chatMessages").append(html); //TODO: SCROLL TO BOTTOM
+}
+
+function scrollToBottom(animated) {
+  var container = $(".chatContainer");
+  var scrollHeight = container[0].scrollHeight;
+
+  if (animated) {
+    container.animate({
+      scrollTop: scrollHeight
+    }, "slow");
+  } else {
+    container.scrollTop(scrollHeight);
+  }
 }
