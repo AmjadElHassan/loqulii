@@ -13,17 +13,6 @@ require('dotenv').config()
 app.set("view engine", "pug")
 app.set("views","views")
 
-
-let server = require('http').createServer(app)
-app.listen(process.env.PORT||PORT,()=>{
-    console.log(`We are live on port:${PORT}`)
-})
-server.listen(3001,()=>{
-    console.log('server thing connected')
-})
-const io = require("socket.io")(server, {pingTimeout: 60000})
-
-
 //passive tools
 app.use(morgan("dev"))
 app.use(bodyParser.urlencoded({ extended: false}))
@@ -34,30 +23,6 @@ app.use(session({
     resave: true,
     saveUninitialized: false
 }))
-
-io.on("connection", (socket)=>{
-    socket.on("setup", userData=>{
-        socket.join(userData._id);//creates a user-specific room. this allows us a place to send all user notifications to
-        socket.emit("connected");
-    })
-
-    socket.on("join room", room=> socket.join(room))
-    socket.on("typing", room=> socket.in(room).emit("typing"))
-    socket.on("stop typing", room=> socket.in(room).emit("stop typing"))
-
-    socket.on("new message", newMessage=>{
-        let chat = newMessage.chat
-
-        if (!chat.users) return "chat.users not defined"
-
-        chat.users.forEach(user=>{
-            console.log(user._id)
-            if(user._id == newMessage.sender._id) return;
-            socket.in(user._id).emit("message received",newMessage)
-        })
-    })
-})
-
 
 //Routes
 const loginRoute = require("./routes/loginRoutes")
@@ -100,4 +65,6 @@ app.get('/', middleware.requireLogin, (req,res,next)=>{
     res.status(200).render("home", payLoad)
 })
 
-server
+app.listen(process.env.PORT||PORT,()=>{
+    console.log(`We are live on port:${PORT}`)
+})

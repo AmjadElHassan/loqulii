@@ -130,7 +130,7 @@ router.post('/', function _callee2(req, res, next) {
 
         case 20:
           newChatMessage = _context2.sent;
-          res.status(201).send(metaLatest);
+          res.status(201).send(latest);
           _context2.next = 28;
           break;
 

@@ -83,6 +83,7 @@ $(document).on("click", ".retweetButton", (event) => {
         url: `/api/posts/${postId}/retweets`,
         type: "POST",
         success: (postData) => {
+            console.log(postData)
             button.find("span").text(postData.retweetUsers.length || "")
             if (postData.retweetUsers.includes(userLoggedIn._id)) {
                 button.addClass("active")
@@ -677,13 +678,4 @@ function getOtherChatUsers(users){
     if (users.length == 1) return users;
     let filt = users.filter(x=>x._id!==userLoggedIn._id)
     return filt
-}
-
-function messageReceived(newMessage){
-    if($(".chatContainer").length == 0){
-        //show popup noti
-    } else{
-        console.log(newMessage)
-        addChatMessageHtml(newMessage)
-    }
 }

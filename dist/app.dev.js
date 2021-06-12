@@ -20,21 +20,7 @@ var session = require('express-session');
 require('dotenv').config();
 
 app.set("view engine", "pug");
-app.set("views", "views");
-
-var server = require('http').createServer(app);
-
-app.listen(process.env.PORT || PORT, function () {
-  console.log("We are live on port:".concat(PORT));
-});
-server.listen(3001, function () {
-  console.log('server thing connected');
-});
-
-var io = require("socket.io")(server, {
-  pingTimeout: 60000
-}); //passive tools
-
+app.set("views", "views"); //passive tools
 
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({
@@ -46,32 +32,7 @@ app.use(session({
   secret: process.env.SessionString,
   resave: true,
   saveUninitialized: false
-}));
-io.on("connection", function (socket) {
-  socket.on("setup", function (userData) {
-    socket.join(userData._id); //creates a user-specific room. this allows us a place to send all user notifications to
-
-    socket.emit("connected");
-  });
-  socket.on("join room", function (room) {
-    return socket.join(room);
-  });
-  socket.on("typing", function (room) {
-    return socket["in"](room).emit("typing");
-  });
-  socket.on("stop typing", function (room) {
-    return socket["in"](room).emit("stop typing");
-  });
-  socket.on("new message", function (newMessage) {
-    var chat = newMessage.chat;
-    if (!chat.users) return "chat.users not defined";
-    chat.users.forEach(function (user) {
-      console.log(user._id);
-      if (user._id == newMessage.sender._id) return;
-      socket["in"](user._id).emit("message received", newMessage);
-    });
-  });
-}); //Routes
+})); //Routes
 
 var loginRoute = require("./routes/loginRoutes");
 
@@ -118,4 +79,6 @@ app.get('/', middleware.requireLogin, function (req, res, next) {
   };
   res.status(200).render("home", payLoad);
 });
-server;
+app.listen(process.env.PORT || PORT, function () {
+  console.log("We are live on port:".concat(PORT));
+});

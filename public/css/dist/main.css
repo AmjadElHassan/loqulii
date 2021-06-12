@@ -10,10 +10,6 @@
   --red: rgb(226, 34, 94);
 }
 
-ul {
-  margin: 0;
-}
-
 .row {
   margin: 0;
   height: 100%;
@@ -630,7 +626,6 @@ button {
 
 .chatPageContainer {
   display: flex;
-  position: relative;
   flex-direction: column;
   min-height: 0;
   flex: 1;
@@ -713,11 +708,9 @@ button {
   flex: 1;
   display: flex;
   flex-direction: column;
-  position: relative;
   overflow-y: auto;
 }
 .chatPageContainer .mainContentContainer .chatContainer .chatMessages {
-  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -725,13 +718,13 @@ button {
   padding: var(--spacing);
 }
 .chatPageContainer .mainContentContainer .chatContainer .chatMessages .message {
-  position: relative;
   padding-bottom: 0.13rem;
   list-style: none;
   display: flex;
   align-items: flex-end;
   flex-shrink: 0;
   flex: 0;
+  -webkit-flex: 0;
 }
 .chatPageContainer .mainContentContainer .chatContainer .chatMessages .message .imageContainer {
   height: 1.5rem;
@@ -751,7 +744,6 @@ button {
 .chatPageContainer .mainContentContainer .chatContainer .chatMessages .message .messageContainer .senderName {
   color: rgba(0, 0, 0, 0.4);
 }
-.chatPageContainer .mainContentContainer .chatContainer .chatMessages .message .messageContainer .typingDots img,
 .chatPageContainer .mainContentContainer .chatContainer .chatMessages .message .messageContainer .messageBody {
   background-color: #f1f0f0;
   padding: 0.4rem 0.8rem;
@@ -799,13 +791,6 @@ button {
 }
 .chatPageContainer .mainContentContainer .chatContainer .chatMessages .message.theirs.last:not(.first) .messageBody {
   border-top-left-radius: 2px;
-}
-.chatPageContainer .mainContentContainer .chatContainer .typingDots {
-  padding: 0 var(--spacing);
-  display: none;
-}
-.chatPageContainer .mainContentContainer .chatContainer .typingDots img {
-  height: 10vh;
 }
 .chatPageContainer .mainContentContainer .chatContainer .footer {
   display: flex;

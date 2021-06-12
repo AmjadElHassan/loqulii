@@ -105,7 +105,9 @@ router.put('/:id', async (req, res, next) => {
         if (req.body.pinned !== undefined) {
             await Post.updateMany({ postedBy: req.session.user._id }, { pinned: false })
         }
+        await console.log(req.body.pinned, req.params.id)
         let newPin = await Post.findByIdAndUpdate(req.params.id, req.body,{new: true})
+        console.log(newPin)
         res.sendStatus(200)
     }
     catch (err) {

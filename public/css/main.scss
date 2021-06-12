@@ -9,9 +9,7 @@
     --grayButtonText: rgba(0, 0, 0, 0.34);
     --red: rgb(226, 34, 94);
 }
-ul{
-    margin:0;
-}
+
 .row {
     margin: 0;
     height: 100%;
@@ -772,7 +770,6 @@ button {
 //newChat page
 .chatPageContainer {
     display: flex;
-    position: relative;
     flex-direction: column;
     min-height: 0;
     flex: 1;
@@ -843,7 +840,6 @@ button {
     min-height: 0;
     flex: 1;
     flex-basis: 0;
-    
 
     .chatTitleBarContainer {
         border-bottom: 1px solid var(--grayLight);
@@ -868,31 +864,33 @@ button {
         position: relative;
         display: flex;
         flex: 1;
-        overflow-y: hidden;
         // max-height: 100%;
+        overflow-y: hidden;
 
         .chatContainer {
             flex: 1;
             display: flex;
             flex-direction: column;
-            position:relative;
             overflow-y: auto;
+
             // height:100%;
             .chatMessages {
-                position: relative;
                 flex: 1;
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-end;
+                // overflow-y: auto;
+                // max-height:100%;
                 padding: var(--spacing);
+
                 .message {
-                    position: relative;
                     padding-bottom: 0.13rem;
                     list-style: none;
                     display: flex;
                     align-items: flex-end;
                     flex-shrink: 0;
                     flex: 0;
+                    -webkit-flex: 0;
 
                     .imageContainer {
                         height: 1.5rem;
@@ -914,7 +912,7 @@ button {
                         .senderName {
                             color: rgba(0, 0, 0, 0.4)
                         }
-                        .typingDots img,
+
                         .messageBody {
                             background-color: #f1f0f0;
                             padding: 0.4rem 0.8rem;
@@ -998,14 +996,6 @@ button {
                         }
 
                     }
-
-                }
-            }
-            .typingDots{
-                padding: 0 var(--spacing);
-                display: none;
-                img{
-                    height:10vh;
 
                 }
             }

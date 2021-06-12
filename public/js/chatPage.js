@@ -1,14 +1,4 @@
-let typing = false
-let lastTypingTime
-
 $(document).ready(()=>{
-    socket.emit("join room", chatId)
-    socket.on("typing", ()=>{
-        $(".typingDots").show()
-    })
-    socket.on("stop typing", ()=>{
-        $(".typingDots").hide()
-    })
     $.get(`/api/chats/${chatId}`, (data)=>{
         $("#chatName").text(getChatName(data))
     })
@@ -26,7 +16,7 @@ $(document).ready(()=>{
         scrollToBottom(false)
 
         $(".loadingSpinnerContainer").remove()
-        $(".chatContainer").css("visibility","visible")
+        $(".chatContainer").css("visibility","visible") 
     })
 })
 
@@ -53,30 +43,11 @@ $(".sendMessageButton").click(()=>{
 })
 
 $(".inputTextBox").keydown((event)=>{
-    updateTyping();
     if(event.which == 13 && !event.shiftKey){
         messageSubmitted()
         return false
     }
 })
-
-function updateTyping(){
-    if (!connected) return;
-    if (!typing){
-        typing=true
-        socket.emit("typing",chatId)
-    }
-    lastTypingTime = new Date().getTime()
-    let timerLength = 3000
-    setTimeout(()=>{
-        let timeNow = new Date().getTime()
-        let timeDiff = timeNow - lastTypingTime
-        if (timeDiff>=timerLength && typing){
-            socket.emit("stop typing", chatId)
-            typing = false
-        }
-    }, timerLength)
-}
 
 function messageSubmitted(){
     content = $(".inputTextBox").val().trim()
@@ -84,8 +55,6 @@ function messageSubmitted(){
     if (content!=""){
         sendMessage(content)
         $(".inputTextBox").val("")    
-        socket.emit("stop typing", chatId)
-        typing = false    
     }
 }
 
@@ -100,9 +69,6 @@ function sendMessage(content){
         $("#chatName").text(getChatName(data.chat))
     
         addChatMessageHtml(data)
-        if (connected){
-            socket.emit("new message",data)
-        }
     })
 }
 
@@ -116,6 +82,7 @@ function addChatMessageHtml(message){
 }
 
 function createMessageHtml(message, nextMessage, lastSenderId){
+    console.log(message, nextMessage)
     let sender = message.sender
     let senderName = sender.firstName +' ' + sender.lastName
 
