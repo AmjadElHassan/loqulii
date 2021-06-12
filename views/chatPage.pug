@@ -15,6 +15,8 @@ block content
                     img(src="/images/spinner.gif", alt="spinner")
                 .chatContainer(style="visibility: hidden")
                     ul.chatMessages
+                    .typingDots
+                        img(src="/images/typing.gif")
                     .footer
                         textarea.inputTextBox(name="messageInput",placeholder="type a message...")
                         button.sendMessageButton 

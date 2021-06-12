@@ -40,7 +40,6 @@ router.post('/', async (req,res,next)=>{//we configured the router to handle req
 
             if (passwordResult === true){
                 req.session.user = user
-                console.log(req.session.user)
                 return res.redirect('/')
             }
             payload.errorMessage = "Please re-enter pasword"

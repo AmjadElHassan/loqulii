@@ -55,7 +55,6 @@ router.put('/:userId/follow', async (req, res, next) => {//we configured the rou
 
         let isFollowing = user2Follow.followers !== undefined && user2Follow.followers.includes(currentUser._id)
         let option = isFollowing ? "$pull" : "$addToSet"
-        console.log(user2Follow, currentUser._id)
         req.session.user = await User.findByIdAndUpdate(currentUser._id, { [option]: { following: user2FollowId } }, { new: true })
         user2Follow = await User.findByIdAndUpdate(user2FollowId, { [option]: { followers: currentUser._id } }, { new: true })
 

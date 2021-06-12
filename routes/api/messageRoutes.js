@@ -54,7 +54,7 @@ router.post('/', async (req, res, next) => {
         metaLatest = await User.populate(latest, {path: "chat.users"})
         let newChatMessage = await Chat.findById(req.body.chatId).populate("latestMessage")
         newChatMessage = await newChatMessage.update({latestMessage: latest})
-        res.status(201).send(latest)
+        res.status(201).send(metaLatest)
     }
     catch (err) {
         console.log("server Error: " + err)
