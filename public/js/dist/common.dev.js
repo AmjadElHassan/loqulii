@@ -592,67 +592,67 @@ function getPostId(target) {
 
 function createPostHtml(postData) {
   var postFocus = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  var postFocusClass = postFocus ? "postFocus" : "";
-  if (!postData) return alert("post object is null");
-  var isReply = postData.replyTo ? true : false;
-  var isRetweet = postData.retweetData ? true : false;
-  retweetedBy = isRetweet ? postData.postedBy.username : null;
-  postData = isRetweet ? postData.retweetData : postData;
 
-  if (postData.postedBy._id == null || postData.postedBy._id == undefined) {
-    //in the case that the postedby is just an object id
-    return console.log('User object not populated');
-  }
+  try {
+    var postFocusClass = postFocus ? "postFocus" : "";
+    if (!postData) return alert("post object is null");
+    var isReply = postData.replyTo ? true : false;
+    var isRetweet = postData.retweetData ? true : false;
+    retweetedBy = isRetweet ? postData.postedBy.username : null;
+    postData = isRetweet ? postData.retweetData : postData;
+    var likeButtonActiveClass = postData.likes.includes(userLoggedIn._id) ? "active" : "";
+    var retweetButtonActiveClass = postData.retweetUsers.includes(userLoggedIn._id) ? "active" : ""; //pulling information from server of current user logged in
 
-  var likeButtonActiveClass = postData.likes.includes(userLoggedIn._id) ? "active" : "";
-  var retweetButtonActiveClass = postData.retweetUsers.includes(userLoggedIn._id) ? "active" : ""; //pulling information from server of current user logged in
+    var postContent = postData.content;
+    var user = postData.postedBy;
+    var userRealName = user.firstName + " ".concat(user.lastName);
+    var timestamp = timeDifference(new Date(), new Date(postData.createdAt)); //retweet header
 
-  var postContent = postData.content;
-  var user = postData.postedBy;
-  var userRealName = user.firstName + " ".concat(user.lastName);
-  var timestamp = timeDifference(new Date(), new Date(postData.createdAt)); //retweet header
+    var retweetText = "";
 
-  var retweetText = "";
-
-  if (isRetweet) {
-    retweetText = "<span>\n        <i class=\"fas fa-retweet\"></i>\n        Retweeted by <a href=\"/profile/".concat(retweetedBy, "\">\n        ").concat(retweetedBy, "\n        </a>\n        </span>");
-  } //pinned header
+    if (isRetweet) {
+      retweetText = "<span>\n        <i class=\"fas fa-retweet\"></i>\n        Retweeted by <a href=\"/profile/".concat(retweetedBy, "\">\n        ").concat(retweetedBy, "\n        </a>\n        </span>");
+    } //pinned header
 
 
-  var pinnedFlag = "";
-
-  if (postData.pinned == true) {
-    pinnedFlag = "<span>\n        <i class=\"fas fa-thumbtack\"></i>\n        Pinned Post\n        </span>";
-  } //reply indication
-
-
-  var replyFlag = "";
-
-  if (isReply && postData.replyTo._id) {
-    if (!postData.replyTo._id) {
-      return alert("replyTo is not poulated");
-    }
-
-    var userReplyingTo = postData.replyTo.postedBy.username;
-    replyFlag = "<div class=\"replyFlag\">Replying To <a href=\"/profile/".concat(userReplyingTo, "\">@").concat(userReplyingTo, "</a></div>");
-  } //delete/pin buttons
-
-
-  var creatorButtons = "";
-  var dataTarget = "#pinPostModal";
-
-  if (postData.postedBy._id === userLoggedIn._id) {
-    var pinnedIndicator = "";
+    var pinnedFlag = "";
 
     if (postData.pinned == true) {
-      pinnedIndicator = "pinned";
-      dataTarget = "#unpinPostModal";
+      pinnedFlag = "<span>\n        <i class=\"fas fa-thumbtack\"></i>\n        Pinned Post\n        </span>";
+    } //reply indication
+
+
+    var replyFlag = "";
+
+    if (isReply && postData.replyTo._id) {
+      if (!postData.replyTo._id) {
+        return alert("replyTo is not poulated");
+      }
+
+      var userReplyingTo = postData.replyTo.postedBy.username;
+      replyFlag = "<div class=\"replyFlag\">Replying To <a href=\"/profile/".concat(userReplyingTo, "\">@").concat(userReplyingTo, "</a></div>");
+    } //delete/pin buttons
+
+
+    var creatorButtons = "";
+    var dataTarget = "#pinPostModal";
+
+    if (postData.postedBy._id === userLoggedIn._id) {
+      var pinnedIndicator = "";
+
+      if (postData.pinned == true) {
+        pinnedIndicator = "pinned";
+        dataTarget = "#unpinPostModal";
+      }
+
+      creatorButtons = "\n        <div class=\"creatorButtons\">\n        <button data-id=\"".concat(postData._id, "\" data-toggle=\"modal\" data-target=\"").concat(dataTarget, "\" class=\"pinButton ").concat(pinnedIndicator, "\">\n        <i class=\"fas fa-thumbtack\"></i>\n        </button>\n        <button data-id=\"").concat(postData._id, "\" data-toggle=\"modal\" data-target=\"#deletePostModal\" class=\"deleteButton\">\n        <i class=\"far fa-times-circle\"></i>\n        </button>\n        </div>");
     }
 
-    creatorButtons = "\n        <div class=\"creatorButtons\">\n        <button data-id=\"".concat(postData._id, "\" data-toggle=\"modal\" data-target=\"").concat(dataTarget, "\" class=\"pinButton ").concat(pinnedIndicator, "\">\n        <i class=\"fas fa-thumbtack\"></i>\n        </button>\n        <button data-id=\"").concat(postData._id, "\" data-toggle=\"modal\" data-target=\"#deletePostModal\" class=\"deleteButton\">\n        <i class=\"far fa-times-circle\"></i>\n        </button>\n        </div>");
+    return "<div class=\"post ".concat(postFocusClass, "\" data-id=\"").concat(postData._id, "\">\n                <div class=\"postActionContainer\">\n                    ").concat(pinnedFlag, "\n                    ").concat(retweetText, "\n                </div>\n                <div class=\"mainContentContainer\">\n                    <div class=\"userImageContainer\">\n                        <img src=\"").concat(user.profilePic, "\">\n                    </div>\n                    <div class=\"postContentContainer\">\n                        <div class=\"header\">\n                            <a class=\"displayName\" href=\"/profile/").concat(user.username, "\">\n                                ").concat(userRealName, "\n                            </a>\n                            <span class=\"username\">@").concat(user.username, "</span>\n                            <span class=\"date\">").concat(timestamp, "</span>\n                            ").concat(creatorButtons, "\n                        </div>\n                        ").concat(replyFlag, "\n                        <div class=\"postBody\">\n                            <span>").concat(postContent || postData.retweetData, "</span>\n                        </div>\n                        <div class=\"postFooter\">\n                            <div class=\"postButtonContainer\">\n                                <button class=\"replyButton\" data-toggle=\"modal\" data-target=\"#replyModal\">\n                                    <i class=\"far fa-comment-alt\"></i>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer green\">\n                                <button class=\"retweetButton ").concat(retweetButtonActiveClass, "\">\n                                    <i class=\"fas fa-retweet\"></i>\n                                    <span>").concat(postData.retweetUsers.length || "", "</span>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer red\">\n                                <button class=\"likeButton ").concat(likeButtonActiveClass, "\">\n                                    <i class=\"far fa-heart\"></i>\n                                    <span>").concat(postData.likes.length || "", "</span>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n                    \n                </div>\n    </div>");
+  } catch (err) {
+    console.log('cannot create post');
+    return console.log(err);
   }
-
-  return "<div class=\"post ".concat(postFocusClass, "\" data-id=\"").concat(postData._id, "\">\n                <div class=\"postActionContainer\">\n                    ").concat(pinnedFlag, "\n                    ").concat(retweetText, "\n                </div>\n                <div class=\"mainContentContainer\">\n                    <div class=\"userImageContainer\">\n                        <img src=\"").concat(user.profilePic, "\">\n                    </div>\n                    <div class=\"postContentContainer\">\n                        <div class=\"header\">\n                            <a class=\"displayName\" href=\"/profile/").concat(user.username, "\">\n                                ").concat(userRealName, "\n                            </a>\n                            <span class=\"username\">@").concat(user.username, "</span>\n                            <span class=\"date\">").concat(timestamp, "</span>\n                            ").concat(creatorButtons, "\n                        </div>\n                        ").concat(replyFlag, "\n                        <div class=\"postBody\">\n                            <span>").concat(postContent || postData.retweetData, "</span>\n                        </div>\n                        <div class=\"postFooter\">\n                            <div class=\"postButtonContainer\">\n                                <button class=\"replyButton\" data-toggle=\"modal\" data-target=\"#replyModal\">\n                                    <i class=\"far fa-comment-alt\"></i>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer green\">\n                                <button class=\"retweetButton ").concat(retweetButtonActiveClass, "\">\n                                    <i class=\"fas fa-retweet\"></i>\n                                    <span>").concat(postData.retweetUsers.length || "", "</span>\n                                </button>\n                            </div>\n                            <div class=\"postButtonContainer red\">\n                                <button class=\"likeButton ").concat(likeButtonActiveClass, "\">\n                                    <i class=\"far fa-heart\"></i>\n                                    <span>").concat(postData.likes.length || "", "</span>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n                    \n                </div>\n    </div>");
 }
 
 function timeDifference(current, previous) {

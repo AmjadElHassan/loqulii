@@ -209,7 +209,7 @@ $("#coverPhoto").change(function () {
             image.src = e.target.result
             if (cropper !== undefined) {
                 cropper.destroy()
-            }    
+            }
             cropper = new Cropper(image, {
                 aspectRatio: 16 / 9,
                 background: false
@@ -280,9 +280,9 @@ $("#imageUploadButton").click((event) => {
 $("#createChatButton").click((event) => {
     let data = JSON.stringify(selectedUsers)
 
-    $.post("/api/chats", {users: data}, async (response)=>{
+    $.post("/api/chats", { users: data }, async (response) => {
 
-        if (!response||!response._id){
+        if (!response || !response._id) {
             return alert('invalid server response')
         }
         window.location.href = `/mail/${response._id}`
@@ -341,20 +341,20 @@ $("#userSearchTextBox").keydown(async (event) => {
     let textbox = $(event.target);
     let value = await textbox.val();
 
-    if (value=="" && (event.which == 8 || (event.keyCode == 8))){
+    if (value == "" && (event.which == 8 || (event.keyCode == 8))) {
         selectedUsers.pop();
         updateSelectedUsersHtml()
         $(".resultsContainer").html("")
 
-        if (selectedUsers.length==0){
-            $("#createChatButton").prop("disabled",true)
+        if (selectedUsers.length == 0) {
+            $("#createChatButton").prop("disabled", true)
         }
         return
     }
 
     timer = setTimeout(async () => {
         value = textbox.val().trim();
-        
+
         if (value == "") {
             return $(".resultsContainer").html("")
         } else {
@@ -375,68 +375,65 @@ function getPostId(target) {
 }
 
 function createPostHtml(postData, postFocus = false) {
-    let postFocusClass = postFocus ? "postFocus" : ""
-    if (!postData) return alert("post object is null")
-    let isReply = postData.replyTo ? true : false
-    let isRetweet = (postData.retweetData ? true : false)
-    retweetedBy = isRetweet ? postData.postedBy.username : null;
+    try {
+        let postFocusClass = postFocus ? "postFocus" : ""
+        if (!postData) return alert("post object is null")
+        let isReply = postData.replyTo ? true : false
+        let isRetweet = (postData.retweetData ? true : false)
+        retweetedBy = isRetweet ? postData.postedBy.username : null;
 
-    postData = isRetweet ? postData.retweetData : postData
-    if (postData.postedBy._id==null||postData.postedBy._id==undefined) {//in the case that the postedby is just an object id
-        return console.log('User object not populated')
-    }
-
-    let likeButtonActiveClass = postData.likes.includes(userLoggedIn._id) ? "active" : ""
-    let retweetButtonActiveClass = postData.retweetUsers.includes(userLoggedIn._id) ? "active" : ""
+        postData = isRetweet ? postData.retweetData : postData
+        let likeButtonActiveClass = postData.likes.includes(userLoggedIn._id) ? "active" : ""
+        let retweetButtonActiveClass = postData.retweetUsers.includes(userLoggedIn._id) ? "active" : ""
 
 
-    //pulling information from server of current user logged in
-    let postContent = postData.content
-    let user = postData.postedBy
-    let userRealName = user.firstName + ` ${user.lastName}`
-    let timestamp = timeDifference(new Date(), new Date(postData.createdAt))
-    //retweet header
-    let retweetText = "";
-    if (isRetweet) {
-        retweetText = `<span>
+        //pulling information from server of current user logged in
+        let postContent = postData.content
+        let user = postData.postedBy
+        let userRealName = user.firstName + ` ${user.lastName}`
+        let timestamp = timeDifference(new Date(), new Date(postData.createdAt))
+        //retweet header
+        let retweetText = "";
+        if (isRetweet) {
+            retweetText = `<span>
         <i class="fas fa-retweet"></i>
         Retweeted by <a href="/profile/${retweetedBy}">
         ${retweetedBy}
         </a>
         </span>`
-    }
-    //pinned header
-    let pinnedFlag = ""
-    if (postData.pinned==true){
-        pinnedFlag = 
-        `<span>
+        }
+        //pinned header
+        let pinnedFlag = ""
+        if (postData.pinned == true) {
+            pinnedFlag =
+                `<span>
         <i class="fas fa-thumbtack"></i>
         Pinned Post
         </span>`
-    }
-
-    //reply indication
-    let replyFlag = ""
-    if (isReply && postData.replyTo._id) {
-        if (!postData.replyTo._id) {
-            return alert("replyTo is not poulated")
-        }
-        let userReplyingTo = postData.replyTo.postedBy.username
-        replyFlag = `<div class="replyFlag">Replying To <a href="/profile/${userReplyingTo}">@${userReplyingTo}</a></div>`
-    }
-
-    //delete/pin buttons
-    let creatorButtons = ""
-    let dataTarget = "#pinPostModal"
-    if (postData.postedBy._id === userLoggedIn._id) {
-
-        let pinnedIndicator = ""
-        if (postData.pinned == true){
-            pinnedIndicator = "pinned"
-            dataTarget = "#unpinPostModal"
         }
 
-        creatorButtons = `
+        //reply indication
+        let replyFlag = ""
+        if (isReply && postData.replyTo._id) {
+            if (!postData.replyTo._id) {
+                return alert("replyTo is not poulated")
+            }
+            let userReplyingTo = postData.replyTo.postedBy.username
+            replyFlag = `<div class="replyFlag">Replying To <a href="/profile/${userReplyingTo}">@${userReplyingTo}</a></div>`
+        }
+
+        //delete/pin buttons
+        let creatorButtons = ""
+        let dataTarget = "#pinPostModal"
+        if (postData.postedBy._id === userLoggedIn._id) {
+
+            let pinnedIndicator = ""
+            if (postData.pinned == true) {
+                pinnedIndicator = "pinned"
+                dataTarget = "#unpinPostModal"
+            }
+
+            creatorButtons = `
         <div class="creatorButtons">
         <button data-id="${postData._id}" data-toggle="modal" data-target="${dataTarget}" class="pinButton ${pinnedIndicator}">
         <i class="fas fa-thumbtack"></i>
@@ -445,9 +442,9 @@ function createPostHtml(postData, postFocus = false) {
         <i class="far fa-times-circle"></i>
         </button>
         </div>`
-    }
+        }
 
-    return `<div class="post ${postFocusClass}" data-id="${postData._id}">
+        return `<div class="post ${postFocusClass}" data-id="${postData._id}">
                 <div class="postActionContainer">
                     ${pinnedFlag}
                     ${retweetText}
@@ -492,6 +489,11 @@ function createPostHtml(postData, postFocus = false) {
                     
                 </div>
     </div>`
+    }
+    catch (err) {
+        console.log('cannot create post')
+        return console.log(err)
+    }
 }
 
 function timeDifference(current, previous) {
@@ -566,26 +568,26 @@ function outputPostsWithReplies(posts, container) {
     })
 }
 
-function outputUsers(results, container){
+function outputUsers(results, container) {
     container.html("");
 
-    if (results.length==0){
+    if (results.length == 0) {
         return container.append("No Results found");
     }
 
-    results.forEach(x=>{
-        let html = createUserHtml(x,true)
+    results.forEach(x => {
+        let html = createUserHtml(x, true)
         container.append(html)
     })
 }
 
-function createUserHtml(userData, showFollowButton){
+function createUserHtml(userData, showFollowButton) {
     let name = userData.firstName + " " + userData.lastName
     let isFollowing = (userLoggedIn.following && userLoggedIn.following.includes(userData._id))
-    let text = isFollowing? "following":"follow";
-    let buttonClass = isFollowing? "followButton following":"followButton";
+    let text = isFollowing ? "following" : "follow";
+    let buttonClass = isFollowing ? "followButton following" : "followButton";
     let followButton = "";
-    if(showFollowButton && userLoggedIn._id!=userData._id){
+    if (showFollowButton && userLoggedIn._id != userData._id) {
         followButton = `<div class="followButtonContainer">
                             <button class="${buttonClass}" data-user=${userData._id}>
                                 ${text}
@@ -609,35 +611,35 @@ function createUserHtml(userData, showFollowButton){
     </div>`
 }
 
-function searchUsers(searchTerm){
-    $.get('/api/users', {search: searchTerm}, (response)=>{
+function searchUsers(searchTerm) {
+    $.get('/api/users', { search: searchTerm }, (response) => {
         outputSelectableUsers(response, $(".resultsContainer"))
     })
 }
 
-function outputSelectableUsers(results, container){
+function outputSelectableUsers(results, container) {
     container.html("");
 
-    if (results.length==0){
+    if (results.length == 0) {
         return container.append("No Results found");
     }
 
-    results.forEach(x=>{
+    results.forEach(x => {
 
-        if (x._id == userLoggedIn._id||selectedUsers.some(users => (users._id == x._id))){
+        if (x._id == userLoggedIn._id || selectedUsers.some(users => (users._id == x._id))) {
             return
         }
 
-        let html = createUserHtml(x,false)
+        let html = createUserHtml(x, false)
         let element = $(html)
-        element.click(()=>{
+        element.click(() => {
             userSelected(x)
         })
         container.append(element)
     })
 }
 
-function userSelected(user){
+function userSelected(user) {
     selectedUsers.push(user);
     updateSelectedUsersHtml()
     $("#userSearchTextBox").val("").focus()
@@ -645,10 +647,10 @@ function userSelected(user){
     $("#createChatButton").prop("disabled", false)
 }
 
-function updateSelectedUsersHtml(){
+function updateSelectedUsersHtml() {
     let elements = [];
 
-    selectedUsers.forEach(x=>{
+    selectedUsers.forEach(x => {
         let name = x.firstName + " " + x.lastName
         let userElement = $(`<span class="selectedUser">${name}</span>`)
         elements.push(userElement)
@@ -658,11 +660,11 @@ function updateSelectedUsersHtml(){
     $("#selectedUsers").prepend(elements)
 }
 
-function getChatName(chatData){
+function getChatName(chatData) {
     let chatName = chatData.chatName;
     if (!chatName) {
         let users = getOtherChatUsers(chatData)
-        let namesArray = users.map(user=>{
+        let namesArray = users.map(user => {
             return user.firstName + " " + user.lastName
         })
         chatName = namesArray.join(", ")
@@ -671,11 +673,11 @@ function getChatName(chatData){
     return chatName
 }
 
-function getOtherChatUsers(users){
-    if (users.users){
+function getOtherChatUsers(users) {
+    if (users.users) {
         users = users.users
     }
     if (users.length == 1) return users;
-    let filt = users.filter(x=>x._id!==userLoggedIn._id)
+    let filt = users.filter(x => x._id !== userLoggedIn._id)
     return filt
 }
