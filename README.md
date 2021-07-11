@@ -14,7 +14,7 @@ Current version supports:
 
 TODO:
 
-- (current task): create effective framework for real-time chat interactions using socket.io. fix styling for chat display. create condition to only load a certain number of chat messages, and then initialize new requests to retrieve older chats when users scroll further back
+- (current task): create effective framework for real-time chat interactions using socket.io. create condition to only load a certain number of chat messages, and then initialize new requests to retrieve older chats when users scroll further back
 
 - (next task): create effective notifications page that runs in real-time
 
