@@ -1,23 +1,27 @@
-let express = require('express')
+const express = require('express')
 const app = express()
 const PORT = 3000
 const middleware = require('./middleware')
 const path = require('path')
+const bodyParser = require('body-parser')
 const morgan = require('morgan')
-const mongoose = require('./database')
 const session = require('express-session')
+const cloudinary = require("cloudinary");
+
 require('dotenv').config()
 
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+});
 
 app.set("view engine", "pug")
 app.set("views","views")
 
 //passive tools
 app.use(morgan("dev"))
-app.use(express.json());
-app.use(express.urlencoded({
-  extended: false
-}));
+app.use(bodyParser.urlencoded({ extended: false}))
 app.use(express.static(path.join(__dirname,"public")))//this serves all of the contents of our public directory as a static file to our client
 
 app.use(session({
