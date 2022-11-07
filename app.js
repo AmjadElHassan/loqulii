@@ -3,7 +3,6 @@ const app = express()
 const PORT = 3000
 const middleware = require('./middleware')
 const path = require('path')
-const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const mongoose = require('./database')
 const session = require('express-session')
@@ -15,7 +14,10 @@ app.set("views","views")
 
 //passive tools
 app.use(morgan("dev"))
-app.use(bodyParser.urlencoded({ extended: false}))
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: false
+}));
 app.use(express.static(path.join(__dirname,"public")))//this serves all of the contents of our public directory as a static file to our client
 
 app.use(session({
