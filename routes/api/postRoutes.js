@@ -1,113 +1,110 @@
-let express = require('express')
-const app = express()
+const express = require('express')
 const router = express.Router()
-const bodyParser = require('body-parser')
-const Post = require('../../schemas/PostSchema.js')
-const User = require('../../schemas/UserSchema.js')
-let bcrypt = require("bcrypt")
-const session = require('express-session')
+const store = require('../../data/store')
 
+router.get('/', async (req, res, next) => {
+    let query = req.query
+    let allPosts = store.getAllPosts()
 
-app.use(bodyParser.urlencoded({ extended: false }))
-
-router.get('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
-    let searchObj = req.query;
-
-    if (searchObj.isReply) {
-        let isReply = (searchObj.isReply == "true")
-        searchObj.replyTo = { $exists: isReply }
-        delete searchObj.isReply
+    // Filter: isReply
+    if (query.isReply !== undefined) {
+        let isReply = (query.isReply === "true")
+        allPosts = allPosts.filter(p => isReply ? p.replyTo != null : p.replyTo == null)
     }
 
-    if (searchObj.followingOnly) {
-        let onlyFollowingPosts = (searchObj.followingOnly == 'true')
-        if (onlyFollowingPosts) {
-            searchObj.postedBy = req.session.user.following
-            searchObj.postedBy.push(req.session.user._id)
-        }
-        delete searchObj.followingOnly
+    // Filter: followingOnly
+    if (query.followingOnly === "true") {
+        let following = [...(req.session.user.following || []), req.session.user._id]
+        allPosts = allPosts.filter(p => following.includes(p.postedBy._id))
     }
 
-    if (searchObj.search){
-        searchObj.content = {$regex: searchObj.search, $options: "i"} 
-        delete searchObj.search
+    // Filter: postedBy
+    if (query.postedBy) {
+        allPosts = allPosts.filter(p => p.postedBy._id === query.postedBy)
     }
-    
-    let results = await getPosts(searchObj)
-    res.status(200).send(results)
+
+    // Filter: search (regex on content)
+    if (query.search) {
+        let re = new RegExp(query.search, "i")
+        allPosts = allPosts.filter(p => p.content && re.test(p.content))
+    }
+
+    // Filter: pinned
+    if (query.pinned !== undefined) {
+        let pinned = (query.pinned === "true" || query.pinned === true)
+        allPosts = allPosts.filter(p => !!p.pinned === pinned)
+    }
+
+    res.status(200).send(allPosts)
 })
 
 router.get('/:id', async (req, res, next) => {
     try {
-        let postData = await getPosts({ _id: req.params.id })
-        if (postData.length == 1) {
-            postData = postData[0]
-        }
+        let postData = store.getPostById(req.params.id)
+        if (!postData) return res.sendStatus(404)
 
-        let results = {
-            postData: postData,
-        }
+        let results = { postData: postData }
 
         if (postData.replyTo) {
             results.replyTo = postData.replyTo
         }
 
-        results.replies = await getPosts({ replyTo: req.params.id })
+        // Get replies to this post
+        let allPosts = store.getAllPosts()
+        results.replies = allPosts.filter(p => p.replyTo && p.replyTo._id === req.params.id)
 
         res.status(200).send(results)
     }
     catch (err) {
         console.log(err)
-        res.status(400)
+        res.sendStatus(400)
     }
 })
 
-
-router.post('/', async (req, res, next) => {//we configured the router to handle requests at root "/" 
-    let postData = {
-        content: req.body.content,
-        postedBy: req.session.user,
-        replyTo: req.body.replyTo
-    }
-
+router.post('/', async (req, res, next) => {
     try {
-        let newPost = await Post.create(postData)
-        let populatedNewPost = await User.populate(newPost, { path: "postedBy" })
-        await Post.populate(newPost, { path: "replyTo" })
-        res.status(201).send(populatedNewPost)
+        let newPost = store.createPost({
+            content: req.body.content,
+            postedBy: req.session.user._id,
+            replyTo: req.body.replyTo || null,
+        })
+        res.status(201).send(newPost)
     } catch (err) {
-        console.log(`asynchronous server response: ${err}`)
+        console.log(err)
         return res.sendStatus(400)
     }
 })
 
 router.put('/:id/like', async (req, res, next) => {
-
-    let postId = req.params.id//we receive the post information for the post being liked
+    let postId = req.params.id
     let userId = req.session.user._id
 
     let isLiked = req.session.user.likes && req.session.user.likes.includes(postId)
 
-    let option = isLiked ? "$pull" : "$addToSet"
-    //insert user like
-    req.session.user = await User.findByIdAndUpdate(userId, { [option]: { likes: postId } }, { new: true })
-        .catch((err) => {
-            console.log(err)
-            res.sendStatus(400)
-        })
-    //insert post like
-    let post = await Post.findByIdAndUpdate(postId, { [option]: { likes: userId } }, { new: true })
+    // Toggle on raw user
+    let rawUser = store._getRawUser(userId)
+    let rawPost = store._getRawPost(postId)
+    if (!rawUser || !rawPost) return res.sendStatus(400)
+
+    if (isLiked) {
+        rawUser.likes = rawUser.likes.filter(id => id !== postId)
+        rawPost.likes = rawPost.likes.filter(id => id !== userId)
+    } else {
+        if (!rawUser.likes.includes(postId)) rawUser.likes.push(postId)
+        if (!rawPost.likes.includes(userId)) rawPost.likes.push(userId)
+    }
+
+    req.session.user = store.getUserById(userId)
+    let post = store.getPostById(postId)
     res.status(200).send(post)
 })
 
 router.put('/:id', async (req, res, next) => {
     try {
         if (req.body.pinned !== undefined) {
-            await Post.updateMany({ postedBy: req.session.user._id }, { pinned: false })
+            store.unpinAllByUser(req.session.user._id)
         }
-        await console.log(req.body.pinned, req.params.id)
-        let newPin = await Post.findByIdAndUpdate(req.params.id, req.body,{new: true})
-        console.log(newPin)
+        store.updatePost(req.params.id, req.body)
         res.sendStatus(200)
     }
     catch (err) {
@@ -117,74 +114,43 @@ router.put('/:id', async (req, res, next) => {
 })
 
 router.post('/:id/retweets', async (req, res, next) => {
-    let postId = req.params.id//we receive the post information for the post being liked
+    let postId = req.params.id
     let userId = req.session.user._id
 
-    //try and delete retweet
-    let deletedPost = await Post.findOneAndDelete({ postedBy: userId, retweetData: postId })
-        .catch(err => {
-            console.log(err)
-            res.status(400)
-        })
+    let rawUser = store._getRawUser(userId)
+    let rawPost = store._getRawPost(postId)
+    if (!rawUser || !rawPost) return res.sendStatus(400)
 
-    let option = deletedPost != null ? "$pull" : "$addToSet";
+    // Check for existing retweet
+    let allPosts = store.getAllPosts()
+    let existingRetweet = allPosts.find(p => p.postedBy._id === userId && p.retweetData && p.retweetData._id === postId)
 
-    let repost = deletedPost;
-
-    if (repost == null) {
-        repost = await Post.create({ postedBy: userId, retweetData: postId })
-            .catch(err => {
-                console.log(err)
-                res.status(400)
-            })
+    if (existingRetweet) {
+        // Un-retweet: delete the retweet post, pull from user and original post
+        store.deletePost(existingRetweet._id)
+        rawUser.retweets = rawUser.retweets.filter(id => id !== existingRetweet._id)
+        rawPost.retweetUsers = rawPost.retweetUsers.filter(id => id !== userId)
+    } else {
+        // Retweet: create retweet post, add to user and original post
+        let repost = store.createPost({ postedBy: userId, retweetData: postId })
+        if (!rawUser.retweets.includes(repost._id)) rawUser.retweets.push(repost._id)
+        if (!rawPost.retweetUsers.includes(userId)) rawPost.retweetUsers.push(userId)
     }
-    //recording our retweet to our User/removing it. depends on option
-    req.session.user = await User.findByIdAndUpdate(userId, { [option]: { retweets: repost._id } }, { new: true })
-        .catch((err) => {
-            console.log(err)
-            res.sendStatus(400)
-        })
-    //recording/removing the user to the list of users who retweeted on the Post 
-    let post = await Post.findByIdAndUpdate(postId, { [option]: { retweetUsers: userId } }, { new: true })
-        .catch((err) => {
-            console.log(err)
-            res.sendStatus(400)
-        })
 
+    req.session.user = store.getUserById(userId)
+    let post = store.getPostById(postId)
     res.status(200).send(post)
 })
 
 router.delete('/:id', async (req, res, next) => {
     try {
-        let postId = { _id: req.params.id }
-        let post = await Post.findOneAndDelete(postId)
+        store.deletePost(req.params.id)
         res.sendStatus(202)
     }
     catch (err) {
         console.log(err)
-        res.status(400)
+        res.sendStatus(400)
     }
 })
-
-async function getPosts(searchObject) {
-    try {
-        let IdCheck = searchObject !== undefined ?
-            searchObject :
-            null;
-        let results = await Post.find(searchObject)
-            .populate("postedBy")
-            .populate("retweetData")
-            .populate("replyTo")
-            .sort({ "createdAt": -1 })
-
-        results = await User.populate(results, { path: "replyTo.postedBy" })
-        return await User.populate(results, { path: "retweetData.postedBy" })
-    }
-    catch (err) {
-        console.log(err)
-    }
-}
-
-
 
 module.exports = router

@@ -5,7 +5,7 @@ const middleware = require('./middleware')
 const path = require('path')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
-const mongoose = require('./database')
+require('./database')
 const session = require('express-session')
 require('dotenv').config()
 

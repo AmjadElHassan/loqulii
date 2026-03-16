@@ -1,67 +1,41 @@
-let express = require('express')
-const app = express()
+const express = require('express')
 const router = express.Router()
-const bodyParser = require('body-parser')
-const User = require('../schemas/UserSchema')
-let bcrypt = require("bcrypt")
+const store = require('../data/store')
 
-
-app.set("view engine", "pug")
-app.set("views","views")
-
-app.use(bodyParser.urlencoded({ extended: false}))
-
-router.get('/', (req,res,next)=>{//we configured the router to handle requests at root "/" 
-    res.status(200).render("register")//to load the login interface
+router.get('/', (req, res, next) => {
+    res.status(200).render("register")
 })
 
-router.post('/',async function(req,res,next){//we configured the router to handle requests at root "/" 
-    try{
-        let firstName = await req.body.firstName.trim()
-        let lastName = await req.body.lastName.trim()
-        let username = await req.body.username.trim()
-        let email = await req.body.email.trim()
-        let password = await req.body.password;    
+router.post('/', async (req, res, next) => {
+    try {
+        let firstName = req.body.firstName && req.body.firstName.trim()
+        let lastName = req.body.lastName && req.body.lastName.trim()
+        let username = req.body.username && req.body.username.trim()
+        let email = req.body.email && req.body.email.trim()
+        let password = req.body.password
 
-        let payload = await req.body
-        console.log(payload)
-        
-        if (firstName && lastName && username && email && password){
-            let existingUser = await User.findOne({
-                $or:[
-                    {username:username},
-                    {email:email}
-                ]
-            }).catch((err)=>{
-                payload.errorMessage = "Please provide only valid characters in each field"
-                res.status(200).render("register", payload)    
-            })
+        let payload = req.body
 
-            if (existingUser==null) {
-                payload.password = await bcrypt.hash(password,10)
-                let newUser = await User.create(payload)
-                console.log(newUser)
+        if (firstName && lastName && username && email && password) {
+            let existingUser = store.getUserByUsername(username) || store.getUserByEmail(email)
+
+            if (existingUser == null) {
+                let newUser = store.createUser({ firstName, lastName, username, email, password })
                 req.session.user = newUser
-                console.log(req.session)
-                console.log("New User created")
-                res.redirect('/')
-            }
-            else{
-                //user found
-                if (email==existingUser.email){
+                return res.redirect('/')
+            } else {
+                if (email == existingUser.email) {
                     payload.errorMessage = "Email already In use."
                 } else {
                     payload.errorMessage = "Username already In use."
                 }
-                res.status(200).render("register", payload)                            
+                return res.status(200).render("register", payload)
             }
-        } 
-
+        }
     }
-    catch(err){
+    catch (err) {
         console.log(err)
     }
 })
-
 
 module.exports = router

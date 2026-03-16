@@ -1,88 +1,59 @@
 const express = require('express')
-const app = express()
 const router = express.Router()
-const bodyParser = require('body-parser')
-const Post = require('../../schemas/PostSchema.js')
-const User = require('../../schemas/UserSchema.js')
-let bcrypt = require("bcrypt")
-const session = require('express-session')
+const store = require('../../data/store')
 const multer = require('multer')
 const upload = multer({ dest: "uploads/" })
 const path = require("path")
 const fs = require('fs')
 
-app.use(bodyParser.urlencoded({ extended: false }))
-
 router.get('/', async (req, res, next) => {
     let searchObj = req.query
 
     if (searchObj.search) {
-        searchObj = {
-            $or: [
-                { firstName: { $regex: searchObj.search, $options: "i" } },
-                { lastName: { $regex: searchObj.search, $options: "i" } },
-                { username: { $regex: searchObj.search, $options: "i" } }
-            ]
-        }
-        delete searchObj.search
+        let results = store.searchUsers(searchObj.search)
+        return res.status(200).send(results)
     }
-    let results = await getUsers(searchObj)
-    res.status(200).send(results)
 
-}
-)
+    // No search term — return empty (match original behavior of needing a query)
+    res.status(200).send([])
+})
 
-router.put('/:userId/follow', async (req, res, next) => {//we configured the router to handle requests at root "/" 
+router.put('/:userId/follow', async (req, res, next) => {
     try {
-
         let currentUser = req.session.user
-        if (!currentUser) return res.sendStatus(200).redirect('/')
+        if (!currentUser) return res.sendStatus(401)
 
         let user2FollowId = req.params.userId
+        let rawTarget = store._getRawUser(user2FollowId)
+        let rawCurrent = store._getRawUser(currentUser._id)
 
-        let user2Follow = await User.find({ _id: user2FollowId })
+        if (!rawTarget || !rawCurrent) return res.sendStatus(404)
 
-        if (!user2Follow) {
-            return res.sendStatus(404)
+        let isFollowing = rawTarget.followers && rawTarget.followers.includes(currentUser._id)
+
+        if (isFollowing) {
+            rawCurrent.following = rawCurrent.following.filter(id => id !== user2FollowId)
+            rawTarget.followers = rawTarget.followers.filter(id => id !== currentUser._id)
+        } else {
+            if (!rawCurrent.following.includes(user2FollowId)) rawCurrent.following.push(user2FollowId)
+            if (!rawTarget.followers.includes(currentUser._id)) rawTarget.followers.push(currentUser._id)
         }
 
-        if (user2Follow.length != 1) {
-            return res.sendStatus(404).send('multiple users found')
-        }
-
-        user2Follow = user2Follow[0]
-
-
-        let isFollowing = user2Follow.followers !== undefined && user2Follow.followers.includes(currentUser._id)
-        let option = isFollowing ? "$pull" : "$addToSet"
-        console.log(user2Follow, currentUser._id)
-        req.session.user = await User.findByIdAndUpdate(currentUser._id, { [option]: { following: user2FollowId } }, { new: true })
-        user2Follow = await User.findByIdAndUpdate(user2FollowId, { [option]: { followers: currentUser._id } }, { new: true })
-
+        req.session.user = store.getUserById(currentUser._id)
         res.status(200).send(req.session.user)
     }
     catch (err) {
         console.log(err)
-        res.status(404)
+        res.sendStatus(404)
     }
 })
 
-router.get('/:userId/followers', async (req, res, next) => {//we configured the router to handle requests at root "/" 
+router.get('/:userId/followers', async (req, res, next) => {
     try {
-        let profileUser = await User.findById(req.params.userId).populate("followers")
-        // let followerList = await User.populate(profileUser,{path: })
-        res.status(202).send(profileUser)
-    }
-    catch (err) {
-        console.log(err)
-        res.status(400).send("Could not retrieve follower list")
-    }
-})
-router.get('/:userId/following', async (req, res, next) => {//we configured the router to handle requests at root "/" 
-    try {
-        let profileUser = await User.findById(req.params.userId).populate("following")
-        // let followerList = await User.populate(profileUser,{path: })
-        res.status(202).send(profileUser)
+        let user = store.getUserById(req.params.userId)
+        if (!user) return res.sendStatus(404)
+        user.followers = (user.followers || []).map(id => store.getUserById(id)).filter(Boolean)
+        res.status(202).send(user)
     }
     catch (err) {
         console.log(err)
@@ -90,32 +61,42 @@ router.get('/:userId/following', async (req, res, next) => {//we configured the 
     }
 })
 
+router.get('/:userId/following', async (req, res, next) => {
+    try {
+        let user = store.getUserById(req.params.userId)
+        if (!user) return res.sendStatus(404)
+        user.following = (user.following || []).map(id => store.getUserById(id)).filter(Boolean)
+        res.status(202).send(user)
+    }
+    catch (err) {
+        console.log(err)
+        res.status(400).send("Could not retrieve follower list")
+    }
+})
 
 router.post('/profilePicture', upload.single("croppedImage"), async (req, res, next) => {
     try {
         if (!req.file) {
             console.log('no file uploaded')
-            res.sendStatus(400)
+            return res.sendStatus(400)
         }
 
         let filePath = `/uploads/images/${req.file.filename}.png`
         let tempPath = req.file.path
-
         let targetPath = path.join(__dirname, `../../${filePath}`)
 
         fs.rename(tempPath, targetPath, async error => {
             if (error != null) {
-                console.log(error);
-                return res.status(400)
+                console.log(error)
+                return res.sendStatus(400)
             }
-
-            req.session.user = await User.findByIdAndUpdate(req.session.user._id, { profilePic: filePath }, { new: true })
+            req.session.user = store.updateUser(req.session.user._id, { profilePic: filePath })
             res.sendStatus(204)
         })
     }
     catch (err) {
         console.log(err)
-        res.sendStatus(400).send("profile picture upload failed")
+        res.sendStatus(400)
     }
 })
 
@@ -123,39 +104,26 @@ router.post('/coverPhoto', upload.single("croppedImage"), async (req, res, next)
     try {
         if (!req.file) {
             console.log('no file uploaded')
-            res.sendStatus(400)
+            return res.sendStatus(400)
         }
 
         let filePath = `/uploads/images/${req.file.filename}.png`
         let tempPath = req.file.path
-
         let targetPath = path.join(__dirname, `../../${filePath}`)
 
         fs.rename(tempPath, targetPath, async error => {
             if (error != null) {
-                console.log(error);
+                console.log(error)
                 return res.sendStatus(400)
             }
-
-            req.session.user = await User.findByIdAndUpdate(req.session.user._id, { coverPhoto: filePath }, { new: true })
+            req.session.user = store.updateUser(req.session.user._id, { coverPhoto: filePath })
             res.sendStatus(204)
         })
     }
     catch (err) {
         console.log(err)
-        res.status(400).send("profile picture upload failed")
+        res.sendStatus(400)
     }
 })
-
-async function getUsers(searchObject) {
-    try {
-        return await User.find(searchObject)
-    }
-    catch (err) {
-        console.log(err)
-    }
-}
-
-
 
 module.exports = router

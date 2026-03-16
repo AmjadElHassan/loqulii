@@ -1,69 +1,43 @@
 const express = require('express')
-const app = express()
 const router = express.Router()
-const bodyParser = require('body-parser')
-const Post = require('../../schemas/PostSchema.js')
-const User = require('../../schemas/UserSchema.js')
-const Chat = require('../../schemas/ChatSchema.js')
-const Message = require('../../schemas/MessageSchema.js')
-let bcrypt = require("bcrypt")
-const session = require('express-session')
-const multer = require('multer')
-const upload = multer({ dest: "uploads/" })
-const path = require("path")
-const fs = require('fs')
-
-app.use(bodyParser.urlencoded({ extended: false }))
+const store = require('../../data/store')
 
 router.get('/', async (req, res, next) => {
     try {
-        let results = await Chat.find({
-            users: {
-                $elemMatch: //return the elements of an array that match the following condition
-                    { $eq: req.session.user._id } //where any value within that element is equal to: our user id
-            }
-        })
-        .populate("users")
-        .populate("latestMessage")
-        .sort({ updatedAt: "desc" })
-
-        results = (await User.populate(results, {path: "latestMessage.sender"}))
-
+        let userId = req.session.user._id
+        let allChats = store.getChats()
+        let results = allChats
+            .filter(c => c.users.some(u => u && u._id === userId))
+            .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
         res.status(200).send(results)
     } catch (err) {
-        console.log("cannot retrieve Chats from Db: " + err)
+        console.log("cannot retrieve Chats: " + err)
         res.sendStatus(400)
     }
 })
 
 router.get('/:chatId', async (req, res, next) => {
     try {
-        let results = await Chat.findOne({_id: req.params.chatId,
-            users: {
-                $elemMatch: //return the elements of an array that match the following condition
-                    { $eq: req.session.user._id } //where any value within that element is equal to: our user id
-            }
-        })
-        .populate("users")
-        .sort({ updatedAt: "desc" })
-        res.status(200).send(results)
+        let userId = req.session.user._id
+        let chat = store.getChatById(req.params.chatId)
+        if (!chat || !chat.users.some(u => u && u._id === userId)) {
+            return res.sendStatus(404)
+        }
+        res.status(200).send(chat)
     } catch (err) {
-        console.log("cannot retrieve Chats from Db: " + err)
+        console.log("cannot retrieve Chat: " + err)
         res.sendStatus(400)
     }
 })
 
 router.get('/:chatId/messages', async (req, res, next) => {
     try {
-        let results = await Message.find({chat: req.params.chatId})
-        .populate("sender")
-        // .sort({ updatedAt: "-1" })
+        let results = store.getMessages(req.params.chatId)
         res.status(200).send(results)
     } catch (err) {
-        console.log("cannot retrieve Chats from Db: " + err)
+        console.log("cannot retrieve messages: " + err)
         res.sendStatus(400)
     }
-
 })
 
 router.post('/', async (req, res, next) => {
@@ -72,16 +46,15 @@ router.post('/', async (req, res, next) => {
             console.log('no request body received')
             return res.sendStatus(400)
         }
-        let chatMembers = await JSON.parse(req.body.users)
-        await chatMembers.push(req.session.user)
+        let chatMembers = JSON.parse(req.body.users)
+        chatMembers.push(req.session.user)
 
-        let chatData = {
+        let userIds = chatMembers.map(u => typeof u === 'string' ? u : u._id)
+
+        let newChat = store.createChat({
             isGroupChat: true,
-            users: chatMembers,
-        }
-
-        let newChat = await Chat.create(chatData)
-
+            users: userIds,
+        })
         res.status(201).send(newChat)
     }
     catch (err) {
@@ -90,17 +63,12 @@ router.post('/', async (req, res, next) => {
     }
 })
 
-// router.post('/messages/:id', async (req, res, next) => {
-//     let chatMembers = req.body
-//     res.status(200).send(chatMembers[0])
-// })
-
 router.put('/:chatId', async (req, res, next) => {
-    try{
-        let chatNameUpdate = await Chat.findByIdAndUpdate(req.params.chatId, req.body)
-        await res.sendStatus(204)
+    try {
+        store.updateChat(req.params.chatId, req.body)
+        res.sendStatus(204)
     }
-    catch(err){
+    catch (err) {
         console.log(err)
         res.sendStatus(400)
     }

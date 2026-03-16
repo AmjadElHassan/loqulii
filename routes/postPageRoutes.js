@@ -1,10 +1,5 @@
 let express = require('express')
-const app = express()
 const router = express.Router()
-const bodyParser = require('body-parser')
-const User = require('../schemas/UserSchema')
-let bcrypt = require("bcrypt")
-const session = require('express-session')
 
 
 router.get('/:id', (req, res, next) => {//we configured the router to handle requests at root "/" 
